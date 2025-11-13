@@ -1,0 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap");
+
+/* compact / full-bleed design */
+:root{
+  --bg:#f5f7fb;
+  --accent:#5b6ef0;
+  --accent-dark:#4b57d8;
+  --muted:#6b7280;
+  --card:#ffffff;
+  --gap:12px;
+  --radius:10px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%}
+body{
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background:var(--bg);
+  color:#111827;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.35;
+  font-size:14px;
+}
+
+/* container takes full width but stays centered; small padding */
+.container{
+  width:100%;
+  max-width:1280px;
+  margin:0 auto;
+  padding:10px;
+}
+
+/* Top section: tight grid, small gaps */
+.top-section{
+  display:grid;
+  grid-template-columns: 320px 1fr 220px;
+  gap:var(--gap);
+  align-items:start;
+  margin-bottom:10px;
+}
+
+/* Poster: compact card, image full cover */
+.poster-box{
+  background:var(--card);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(15,23,42,0.06);
+  position:relative;
+}
+
+.poster-box img{
+  display:block;
+  width:100%;
+  height:260px;
+  object-fit:cover;
+}
+
+/* price tag small and subtle */
+.tag{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:600;
+  font-size:13px;
+  box-shadow:0 6px 14px rgba(91,110,240,0.18);
+}
+
+/* Info box: compact padding, no oversized spacing */
+.info-box{
+  background:var(--card);
+  padding:14px;
+  border-radius:var(--radius);
+  box-shadow:0 6px 18px rgba(15,23,42,0.04);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.info-box h1{
+  font-size:20px;
+  color:var(--accent-dark);
+  margin-bottom:4px;
+  line-height:1.1;
+}
+
+.info-box p{
+  color:var(--muted);
+  font-size:13.5px;
+  margin-bottom:6px;
+}
+
+/* buy button compact */
+.btn-buy{
+  align-self:flex-start;
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  color:#fff;
+  padding:8px 14px;
+  border-radius:10px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .12s,box-shadow .12s;
+  font-size:14px;
+}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(75,87,216,0.18)}
+
+/* side stats: stacked compact cards */
+.side-stats{display:flex;flex-direction:column;gap:8px}
+.card{
+  background:var(--card);
+  padding:12px;
+  border-radius:10px;
+  box-shadow:0 6px 14px rgba(15,23,42,0.04);
+  text-align:center;
+}
+.card p{color:var(--muted);font-size:12.5px;margin-bottom:6px}
+.card h3{font-size:18px;color:var(--accent-dark);margin:0}
+
+/* Summary: two small tiles inline */
+.summary-section{
+  display:flex;
+  gap:12px;
+  margin-bottom:10px;
+}
+.summary-section h2{display:none} /* hide large heading to save space */
+.summary-grid{
+  display:flex;
+  gap:12px;
+  width:100%;
+}
+.summary-box{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  font-size:13px;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+.summary-box.green{background:linear-gradient(90deg,#4fd1c5,#38bdf8)}
+.summary-box.teal{background:linear-gradient(90deg,#a78bfa,#f472b6)}
+.summary-box h3{font-size:18px;margin-top:6px;font-weight:700}
+
+/* Stats section: compact bars */
+.stats-section{
+  background:transparent;
+  margin-bottom:10px;
+  padding:6px 0;
+}
+.stats-section h2{font-size:16px;margin-bottom:8px;color:#111827}
+.bar-list{display:flex;flex-direction:column;gap:8px}
+.bar-item{
+  display:grid;
+  grid-template-columns:36px 1fr 80px;
+  gap:8px;
+  align-items:center;
+  font-size:13px;
+}
+.bar{background:#e6e9ef;height:16px;border-radius:999px;overflow:hidden}
+.bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  transition:width .28s ease;
+}
+
+/* CTA: tight and full width */
+.cta-section{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:14px;
+  border-radius:10px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+  color:#fff;
+  align-items:center;
+  margin-bottom:6px;
+}
+.cta-section h2{font-size:18px;margin:0}
+.cta-section p{font-size:13px;margin:0;opacity:.95}
+.btn-order{
+  background:#fff;color:var(--accent-dark);border:none;padding:10px 16px;border-radius:10px;font-weight:700;
+}
+
+/* remove excess margins on elements */
+main,section,div,p,button,h1,h2,h3{margin:0}
+
+/* small utilities */
+.text-muted{color:var(--muted);font-size:13px}
+
+/* =================== Responsive =================== */
+@media (max-width:980px){
+  .top-section{grid-template-columns:1fr;gap:10px}
+  .poster-box img{height:220px}
+  .side-stats{flex-direction:row;gap:8px}
+  .side-stats .card{flex:1;padding:10px;font-size:13px}
+  .summary-grid{flex-direction:column}
+  .bar-item{grid-template-columns:30px 1fr 60px;font-size:12.5px}
+  .container{padding:8px}
+}
+
+/* very small screens */
+@media (max-width:420px){
+  .poster-box img{height:180px}
+  .btn-buy,.btn-order{padding:8px 10px;font-size:13px}
+  .info-box h1{font-size:18px}
+}
