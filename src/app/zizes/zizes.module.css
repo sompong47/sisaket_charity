@@ -1,0 +1,451 @@
+/* Base Container */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 2rem;
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Content Wrapper */
+.contentWrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.mainContent {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  margin: 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Steps Navigation */
+.stepsNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  padding: 1.5rem;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #9ca3af;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.stepActive {
+  color: #5b5bff;
+}
+
+.stepNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.stepActive .stepNumber {
+  background: #5b5bff;
+  color: white;
+}
+
+/* Main Wrapper */
+.wrapper {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+}
+
+/* Left Section */
+.leftSection {
+  background: #fafafa;
+  padding: 2rem;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.imageSection {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.productImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Info Box */
+.infoBox {
+  background: #d1f4fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #a6e6f2;
+}
+
+.infoTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0891b2;
+  margin: 0 0 1rem 0;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.infoItem strong {
+  font-weight: 600;
+  color: #0891b2;
+}
+
+/* Right Section */
+.rightSection {
+  padding: 2rem 2.5rem;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.25rem;
+}
+
+/* Shirt Type Selection */
+.shirtTypeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.shirtTypeCard {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.shirtTypeCard:hover {
+  border-color: #5b5bff;
+  background: #f0f4ff;
+}
+
+.shirtTypeCardActive {
+  border-color: #5b5bff;
+  background: #e8edff;
+  box-shadow: 0 4px 12px rgba(91, 91, 255, 0.2);
+}
+
+.radioButton {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: all 0.2s ease;
+}
+
+.shirtTypeCardActive .radioButton {
+  border-color: #5b5bff;
+}
+
+.radioButtonInner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #5b5bff;
+}
+
+.shirtTypeContent h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.25rem 0;
+}
+
+.shirtTypeContent p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0.15rem 0;
+}
+
+.shirtTypeNote {
+  font-size: 12px !important;
+  color: #9ca3af !important;
+  font-style: italic;
+}
+
+/* Size Selection */
+.sizeSelection {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sizeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sizeRow:last-child {
+  margin-bottom: 0;
+}
+
+.sizeItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sizeLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Quantity Control */
+.quantityControl {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.quantityButton {
+  width: 36px;
+  height: 36px;
+  background: white;
+  border: none;
+  color: #5b5bff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantityButton:hover {
+  background: #f0f4ff;
+}
+
+.quantityButton:active {
+  background: #e8edff;
+}
+
+.quantityInput {
+  flex: 1;
+  height: 36px;
+  border: none;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  background: white;
+  outline: none;
+}
+
+/* Total Summary */
+.totalSummary {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.totalRow:last-child {
+  margin-bottom: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.totalRow strong {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.totalPrice {
+  color: #10b981;
+  font-size: 20px !important;
+}
+
+/* Buttons */
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.submitButton:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.backButton {
+  width: 100%;
+  padding: 1rem;
+  background: white;
+  color: #5b5bff;
+  border: 2px solid #5b5bff;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background: #f0f4ff;
+  border-color: #4a4ae6;
+  color: #4a4ae6;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .leftSection {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .shirtTypeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .headerContent {
+    padding: 0 1rem;
+  }
+
+  .contentWrapper {
+    padding: 1rem 0.5rem;
+  }
+
+  .rightSection {
+    padding: 1.5rem;
+  }
+
+  .stepsNav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sizeRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .pageTitle {
+    font-size: 18px;
+    padding: 1rem;
+  }
+}
