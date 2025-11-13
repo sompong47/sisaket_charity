@@ -40,3 +40,11 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Ensure the root mount and html/body use the CSS variable background so
+   rogue styles or third-party overlays don't force a full-page color. */
+#__next,
+html,
+body {
+  background: var(--background) !important;
+}
