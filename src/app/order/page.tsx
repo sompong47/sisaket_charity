@@ -125,7 +125,7 @@ export default function Page() {
                   <img src="/gf.jpg" alt="เสื้อแบบที่ 1" className={styles.sliderImage} />
                 </SwiperSlide>
                 <SwiperSlide>
-                  <img src="/sisaket4.jpg" alt="เสื้อแบบที่ 2" className={styles.sliderImage} />
+                  <img src="/ssk2.jpg" alt="เสื้อแบบที่ 2" className={styles.sliderImage} />
                 </SwiperSlide>
                 <SwiperSlide>
                   <img src="/sisaket2.jpg" alt="เสื้อแบบที่ 3" className={styles.sliderImage} />
