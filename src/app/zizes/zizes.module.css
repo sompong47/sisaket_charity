@@ -402,13 +402,11 @@
    INFO BOX (Bottom) 
    ==================== */
 .infoBox {
-  background: #eff6ff;
+  background: #dbeafe;
   border-radius: 12px;
-  padding: 2rem;
+  padding: 1.5rem;
   margin-top: 2rem;
-  border: 2px solid #bfdbfe;
-  display: flex;
-  gap: 1.5rem;
+  border: 2px solid #93c5fd;
   width: 100%;
   max-width: 800px;
   margin-left: auto;
@@ -416,46 +414,50 @@
 }
 
 .infoIcon {
-  font-size: 32px;
-  flex-shrink: 0;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.75rem;
 }
 
 .infoContent {
-  flex-grow: 1;
+  width: 100%;
 }
 
 .infoTitle {
   font-size: 18px;
-  font-weight: 600;
-  color: #1e40af;
-  margin: 0 0 1rem 0;
+  font-weight: 700;
+  color: #1e3a8a !important;
+  margin: 0 0 1.25rem 0;
+  text-align: center;
 }
 
 .infoGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .infoItem {
   font-size: 14px;
-  color: #1e3a8a;
-  line-height: 1.6;
+  line-height: 1.8;
+  color: #1e40af;
+  text-align: left;
 }
 
 .infoItem strong {
   font-weight: 600;
-  color: #1e40af;
+  color: #1e3a8a;
 }
 
 .infoNote {
-  font-size: 13px;
-  color: #1e3a8a;
-  line-height: 1.6;
-  margin: 1rem 0 0 0;
+  font-size: 14px;
+  color: #1e40af;
+  margin-top: 0.5rem;
+  text-align: left;
+  line-height: 1.8;
   padding-top: 1rem;
-  border-top: 1px solid #bfdbfe;
+  border-top: 1px solid #93c5fd;
 }
 
 /* ==================== 
@@ -499,10 +501,15 @@
   .infoBox {
     flex-direction: column;
     gap: 0.75rem;
+    padding: 1.25rem;
   }
 
   .infoGrid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .infoIcon {
+    font-size: 2rem;
   }
 }
 
@@ -547,4 +554,131 @@
     height: 32px;
     font-size: 13px;
   }
+
+  .modalContent {
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 420px;         /* ทำให้กล่องกว้างขึ้น */
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;            /* ระยะห่างภายใน */
+  font-size: 18px;      /* ขยายขนาดตัวหนังสือรวม */
+}
+
+  .modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+}
+
+/* ==================== 
+   MODAL STYLES 
+   ==================== */
+/* พื้นหลังมืดของ modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* กล่องหลักของ modal */
+.modalContent {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 430px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-size: 18px;
+}
+
+
+/* ไอคอน */
+.modalIcon {
+  font-size: 40px;
+  text-align: center;
+}
+
+/* หัวข้อ */
+.modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* กล่องข้อมูลทุกส่วนให้ดูเป็นหนึ่งเดียว */
+.modalInfo,
+.modalSummary,
+.modalPricing {
+  background: #f4f4f4;
+  padding: 16px;
+  border-radius: 12px;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+/* หัวข้อย่อย */
+.modalSummary h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+/* ราคาแบบแถว */
+.pricingRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.totalPrice {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e60000;
+}
+
+/* ปุ่มต่างๆ */
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.confirmBtn,
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ปุ่มเฉพาะ */
+.confirmBtn {
+  background: #28a745;
+  color: white;
+}
+
+.cancelBtn {
+  background: #cccccc;
+}
+.no-scroll {
+  overflow: hidden !important;
+  height: 100% !important;
+  position: fixed !important;
+  width: 100% !important;
 }

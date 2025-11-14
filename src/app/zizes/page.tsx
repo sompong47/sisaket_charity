@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
@@ -60,13 +60,36 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
   const [selectedType, setSelectedType] = useState<ShirtType>(null);
   const [quantities, setQuantities] = useState<Quantities>({
     SSS: 0, SS: 0, S: 0, M: 0, L: 0, XL: 0,
-    '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
-    '6XL': 0, '7XL': 0, '8XL': 0, '9XL': 0, '10XL': 0
+    "2XL": 0, "3XL": 0, "4XL": 0, "5XL": 0,
+    "6XL": 0, "7XL": 0, "8XL": 0, "9XL": 0, "10XL": 0,
   });
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // ===================================
+  // 🔒 ล็อก scroll เมื่อเปิด Modal
+  // ===================================
+  useEffect(() => {
+  let scrollY = 0;
+
+  if (showConfirmModal) {
+    scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  } else {
+    scrollY = parseInt(document.body.style.top || "0") * -1;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    window.scrollTo(0, scrollY);
+  }
+}, [showConfirmModal]);
+
 
   // ==================== CALCULATIONS ====================
   const getTotalQuantity = (): number => {
-    return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
+  return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
   };
 
   const getTotalPrice = (): number => {
@@ -109,6 +132,11 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
       return;
     }
 
+    // แสดง Modal ยืนยัน
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmOrder = (): void => {
     const shirtTypeLabel = SHIRT_TYPES.find(t => t.id === selectedType)?.label || '';
 
     alert(`✅ สั่งซื้อสำเร็จ!
@@ -118,7 +146,11 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
 จำนวนรวม: ${getTotalQuantity()} ตัว
 ราคารวม: ${getGrandTotal().toLocaleString()} บาท`);
 
-    // router.push('/payment');
+    setShowConfirmModal(false);
+  };
+
+  const handleCancelOrder = (): void => {
+    setShowConfirmModal(false);
   };
 
   const handleBackClick = (): void => {
@@ -170,6 +202,26 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
             </SwiperSlide>
           ))}
         </Swiper>
+      </div>
+    </div>
+  );
+
+  const renderPriceBox = () => (
+    <div className={styles.priceBox}>
+      <h3 className={styles.priceBoxTitle}>รูปแบบสินค้า</h3>
+      <div className={styles.priceGrid}>
+        <div className={styles.priceItem}>
+          <strong>ราคา:</strong> {PRICE_PER_SHIRT} บาท/ตัว
+        </div>
+        <div className={styles.priceItem}>
+          <strong>ส่วนลดรวม:</strong> 1 ตัว
+        </div>
+        <div className={styles.priceItem}>
+          <strong>รวมทั้งหมด:</strong> {PRICE_PER_SHIRT} บาท
+        </div>
+        <div className={styles.priceItem}>
+          <strong>ค่าจัดส่ง:</strong> {BASE_SHIPPING} บาท
+        </div>
       </div>
     </div>
   );
@@ -285,22 +337,16 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
             <strong>การชำระเงิน:</strong> โอนเงินผ่านบัญชีธนาคาร
           </div>
           <div className={styles.infoItem}>
-            <strong>การจัดส่ง:</strong> จัดส่งทั่วประเทศไทย ค่าจัดส่ง ตัวแรก {BASE_SHIPPING} บาท ตัวถัดไปเพิ่มตัวละ {ADDITIONAL_SHIPPING} บาท
+            <strong>การจัดส่ง:</strong> ค่าจัดส่งตัวแรก {BASE_SHIPPING} บาท ตัวถัดไป {ADDITIONAL_SHIPPING} บาท
           </div>
         </div>
-        <p className={styles.infoNote}>
-          หลักฐานการชำระเงินต้องได้รับการตรวจสอบก่อนดำเนินการจัดส่ง 
-          ระบบจะไม่สามารถยกเลิกคำสั่งซื้อได้หลังจากชำระเงินแล้ว 
-          (วิธีการโอนเงินจะแสดงในขั้นตอนถัดไป) จำเป็นต้องโอนเงิน ภายใน 243 ปี 
-          โอนมากหรือน้อยกว่าราคาจะไม่ได้รับการยืนยันคำสั่งซื้อทันใจ
-        </p>
       </div>
     </div>
   );
 
   // ==================== MAIN RENDER ====================
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${showConfirmModal ? styles["no-scroll-container"] : ""}`}>
       {renderHeader()}
       {renderStepsNav()}
 
@@ -308,6 +354,7 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
         {renderImageSlider()}
 
         <div className={styles.rightSection}>
+          {renderPriceBox()}
           {renderShirtTypeSelection()}
           {renderSizeSelection()}
           {renderSummary()}
@@ -315,6 +362,58 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
           {renderInfoBox()}
         </div>
       </div>
+
+      {/* Modal ยืนยันการสั่งซื้อ */}
+      {showConfirmModal && (
+        <div className={styles.modalOverlay} onClick={handleCancelOrder}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIcon}>❓</div>
+            <h2 className={styles.modalTitle}>ยืนยันการสั่งซื้อ</h2>
+            
+            <div className={styles.modalInfo}>
+              <p><strong>ชื่อ-นามสกุล:</strong> สมชัย จงรัมย์</p>
+              <p><strong>โทรศัพท์:</strong> 0984567897</p>
+              <p><strong>อีเมล:</strong> somjai422@gmail.com</p>
+              <p><strong>ที่อยู่:</strong> hghghghghghgh</p>
+              <p><strong>รูปแบบเสื้อ:</strong> {SHIRT_TYPES.find(t => t.id === selectedType)?.label}</p>
+            </div>
+
+            <div className={styles.modalSummary}>
+              <h3>รายการสั่งซื้อ:</h3>
+              <p>{getSelectedSizes()}</p>
+            </div>
+
+            <div className={styles.modalPricing}>
+              <div className={styles.pricingRow}>
+                <span>จำนวนรวม:</span>
+                <strong>{getTotalQuantity()} ตัว</strong>
+              </div>
+              <div className={styles.pricingRow}>
+                <span>ราคาเสื้อ:</span>
+                <strong>฿{getTotalPrice().toLocaleString()}</strong>
+              </div>
+              <div className={styles.pricingRow}>
+                <span>ค่าจัดส่ง:</span>
+                <strong>฿{getShippingCost().toLocaleString()}</strong>
+              </div>
+              <div className={styles.pricingRow}>
+                <span>ราคารวมทั้งหมด:</span>
+                <strong className={styles.totalPrice}>฿{getGrandTotal().toLocaleString()}</strong>
+              </div>
+            </div>
+
+            <div className={styles.modalButtons}>
+              <button className={styles.confirmBtn} onClick={handleConfirmOrder}>
+                ยืนยันสั่งซื้อ
+              </button>
+              <button className={styles.cancelBtn} onClick={handleCancelOrder}>
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+  
