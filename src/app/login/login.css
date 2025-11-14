@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap");
+
+body {
+  margin: 0;
+  font-family: "Sarabun", sans-serif;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  align-items: center;
+}
+
+.login-card {
+  background: white;
+  padding: 35px;
+  width: 100%;
+  max-width: 430px;
+  border-radius: 18px;
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.logo-box {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.logo {
+  height: 65px;
+}
+
+.back-link {
+  margin-top: 12px;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #5f6af0;
+  text-decoration: none;
+}
+
+.register-text {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #666;
+}
+
+.register-text a {
+  color: #5f6af0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-title {
+  margin-top: 25px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Google button */
+.google-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #d9dcff;
+  background: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.google-icon {
+  width: 24px;
+}
+
+.form-section {
+  text-align: left;
+  margin-top: 22px;
+}
+
+.form-section label {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.form-section input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #d4d7ff;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.login-btn {
+  width: 100%;
+  background: #5f6af0;
+  color: rgb(224, 224, 224);
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  opacity: 0.9;
+}

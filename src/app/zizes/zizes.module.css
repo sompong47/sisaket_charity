@@ -1,0 +1,684 @@
+/* ==================== 
+   BASE STYLES 
+   ==================== */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ==================== 
+   HEADER SECTION 
+   ==================== */
+.header {
+  background: white;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.pageTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+  text-align: left;
+}
+
+/* ==================== 
+   STEPS NAVIGATION 
+   ==================== */
+.stepsNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem auto 1.5rem;
+  padding: 1.2rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  max-width: 1200px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #999;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.stepActive {
+  color: #2563eb;
+}
+
+.stepNumber {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.stepActive .stepNumber {
+  background: #2563eb;
+  color: white;
+}
+
+/* ==================== 
+   LAYOUT WRAPPER 
+   ==================== */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ==================== 
+   LEFT SECTION - IMAGE SLIDER 
+   ==================== */
+.leftSection {
+  width: 100%;
+  max-width: 900px;
+}
+
+.imageSlider {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: #fff;
+}
+
+.sliderImage {
+  width: 100%;
+  height: 430px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Swiper Pagination Customization */
+:global(.swiper-pagination-bullet) {
+  background: #2563eb !important;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+:global(.swiper-pagination-bullet-active) {
+  opacity: 1;
+  background: #1d4ed8 !important;
+}
+
+/* ==================== 
+   RIGHT SECTION - FORM 
+   ==================== */
+.rightSection {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* ==================== 
+   PRICE BOX (Top Info) 
+   ==================== */
+.priceBox {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 2px solid #93c5fd;
+}
+
+.priceBoxTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e40af;
+  margin: 0 0 1rem 0;
+}
+
+.priceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.priceItem {
+  font-size: 14px;
+  color: #1e3a8a;
+  line-height: 1.8;
+}
+
+.priceItem strong {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+/* ==================== 
+   SHIRT TYPE SELECTION 
+   ==================== */
+.shirtTypeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.shirtTypeCard {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.shirtTypeCard:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.shirtTypeCard.active {
+  border-color: #2563eb;
+  background: #dbeafe;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.typeImage {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.shirtTypeCard span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+}
+
+.shirtTypeCard.active span {
+  color: #1e40af;
+}
+
+/* ==================== 
+   SIZE SELECTION 
+   ==================== */
+.sizeSelection {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.sizeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sizeRow:last-child {
+  margin-bottom: 0;
+}
+
+.sizeItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sizeLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+}
+
+/* ==================== 
+   QUANTITY CONTROLS 
+   ==================== */
+.qtyControl {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.qtyControl button {
+  width: 36px;
+  height: 36px;
+  background: white;
+  border: none;
+  color: #2563eb;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qtyControl button:hover {
+  background: #eff6ff;
+}
+
+.qtyControl button:active {
+  background: #dbeafe;
+}
+
+.qtyControl input {
+  flex: 1;
+  height: 36px;
+  border: none;
+  border-left: 2px solid #e5e7eb;
+  border-right: 2px solid #e5e7eb;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  background: white;
+  outline: none;
+}
+
+/* ==================== 
+   ORDER SUMMARY 
+   ==================== */
+.summaryContainer {
+  margin-bottom: 1.5rem;
+}
+
+.summary {
+  background: #f0fdf4;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid #2563eb;
+}
+
+.summaryTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0 0 1rem 0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: #2563eb;
+  margin: 0.5rem 0;
+}
+
+.summaryRow:last-child {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #2563eb;
+  font-size: 17px;
+}
+
+.summaryRow strong {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* ==================== 
+   ACTION BUTTONS 
+   ==================== */
+.submitButton {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.submitButton:hover {
+  background-color: #1d4ed8;
+}
+
+.submitButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.backButton {
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid #d1d5db;
+  color: #6b7280;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.backButton:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+/* ==================== 
+   INFO BOX (Bottom) 
+   ==================== */
+.infoBox {
+  background: #dbeafe;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border: 2px solid #93c5fd;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.infoIcon {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.infoContent {
+  width: 100%;
+}
+
+.infoTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a8a !important;
+  margin: 0 0 1.25rem 0;
+  text-align: center;
+}
+
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.infoItem {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #1e40af;
+  text-align: left;
+}
+
+.infoItem strong {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.infoNote {
+  font-size: 14px;
+  color: #1e40af;
+  margin-top: 0.5rem;
+  text-align: left;
+  line-height: 1.8;
+  padding-top: 1rem;
+  border-top: 1px solid #93c5fd;
+}
+
+/* ==================== 
+   RESPONSIVE - TABLET 
+   ==================== */
+@media (max-width: 1024px) {
+  .wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .stepsNav {
+    gap: 1.5rem;
+  }
+
+  .step span {
+    font-size: 14px;
+  }
+}
+
+/* ==================== 
+   RESPONSIVE - MOBILE 
+   ==================== */
+@media (max-width: 768px) {
+  .sliderImage {
+    height: 300px;
+  }
+
+  .sizeRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .shirtTypeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .priceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .infoBox {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .infoGrid {
+    flex-direction: column;
+  }
+
+  .infoIcon {
+    font-size: 2rem;
+  }
+}
+
+/* ==================== 
+   RESPONSIVE - SMALL MOBILE 
+   ==================== */
+@media (max-width: 640px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .wrapper {
+    padding: 1rem 0.5rem;
+  }
+
+  .stepsNav {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .rightSection {
+    padding: 1.5rem;
+  }
+
+  .sizeRow {
+    grid-template-columns: 1fr;
+  }
+
+  .qtyControl button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .qtyControl input {
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .modalContent {
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 420px;         /* ทำให้กล่องกว้างขึ้น */
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;            /* ระยะห่างภายใน */
+  font-size: 18px;      /* ขยายขนาดตัวหนังสือรวม */
+}
+
+  .modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+}
+
+/* ==================== 
+   MODAL STYLES 
+   ==================== */
+/* พื้นหลังมืดของ modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* กล่องหลักของ modal */
+.modalContent {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 430px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-size: 18px;
+}
+
+
+/* ไอคอน */
+.modalIcon {
+  font-size: 40px;
+  text-align: center;
+}
+
+/* หัวข้อ */
+.modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* กล่องข้อมูลทุกส่วนให้ดูเป็นหนึ่งเดียว */
+.modalInfo,
+.modalSummary,
+.modalPricing {
+  background: #f4f4f4;
+  padding: 16px;
+  border-radius: 12px;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+/* หัวข้อย่อย */
+.modalSummary h3 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+/* ราคาแบบแถว */
+.pricingRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.totalPrice {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e60000;
+}
+
+/* ปุ่มต่างๆ */
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.confirmBtn,
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ปุ่มเฉพาะ */
+.confirmBtn {
+  background: #28a745;
+  color: white;
+}
+
+.cancelBtn {
+  background: #cccccc;
+}
+.no-scroll {
+  overflow: hidden !important;
+  height: 100% !important;
+  position: fixed !important;
+  width: 100% !important;
+}
