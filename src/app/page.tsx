@@ -1,7 +1,11 @@
 "use client";
+
 import "./styles.css";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
+
   return (
     <main className="container">
       {/* ส่วนบน */}
@@ -17,7 +21,11 @@ export default function Page() {
             โครงการจัดทำเสื้อเพื่อเฉลิมฉลองประวัติศาสตร์ของเมืองที่มีความสำคัญทางวัฒนธรรม
             เพื่อให้ประชาชนร่วมกันภาคภูมิใจใน "เมือง 243 ปี"
           </p>
-          <button className="btn-buy">🛒 สั่งซื้อเสื้อเลย!</button>
+
+          {/* ปุ่มไปหน้า order */}
+          <button className="btn-buy" onClick={() => router.push("/order")}>
+            🛒 สั่งซื้อเสื้อเลย!
+          </button>
         </div>
 
         <div className="side-stats">
@@ -37,28 +45,32 @@ export default function Page() {
         className="summary-section"
         style={{ fontSize: "0.85rem", padding: "8px 0" }}
       >
-        <h2 style={{ fontSize: "1rem", margin: "0 0 8px 0" }}>เลือกดูข้อมูลแต่ละแบบ</h2>
+        <h2 style={{ fontSize: "1rem", margin: "0 0 8px 0" }}>
+          เลือกดูข้อมูลแต่ละแบบ
+        </h2>
+
         <div
           className="summary-grid"
           style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-        gap: "8px",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: "8px",
           }}
         >
           <div
-        className="summary-box green"
-        style={{ padding: "8px", borderRadius: "6px" }}
+            className="summary-box green"
+            style={{ padding: "8px", borderRadius: "6px" }}
           >
-        <p style={{ margin: 0, fontSize: "0.75rem" }}>ยอดขายรวม</p>
-        <h3 style={{ margin: 0, fontSize: "1rem" }}>26,718 ตัว</h3>
+            <p style={{ margin: 0, fontSize: "0.75rem" }}>ยอดขายรวม</p>
+            <h3 style={{ margin: 0, fontSize: "1rem" }}>26,718 ตัว</h3>
           </div>
+
           <div
-        className="summary-box teal"
-        style={{ padding: "8px", borderRadius: "6px" }}
+            className="summary-box teal"
+            style={{ padding: "8px", borderRadius: "6px" }}
           >
-        <p style={{ margin: 0, fontSize: "0.75rem" }}>จำนวนออเดอร์</p>
-        <h3 style={{ margin: 0, fontSize: "1rem" }}>1,486 รายการ</h3>
+            <p style={{ margin: 0, fontSize: "0.75rem" }}>จำนวนออเดอร์</p>
+            <h3 style={{ margin: 0, fontSize: "1rem" }}>1,486 รายการ</h3>
           </div>
         </div>
       </section>
@@ -98,7 +110,11 @@ export default function Page() {
       <section className="cta-section">
         <h2>พร้อมสั่งซื้อแล้วหรือยัง?</h2>
         <p>มีจำนวนจำกัด รีบจองก่อนสินค้าหมดนะครับ!</p>
-        <button className="btn-order">🛍️ สั่งซื้อเลย</button>
+
+        {/* ปุ่มไปหน้า order */}
+        <button className="btn-order" onClick={() => router.push("/order")}>
+          🛍️ สั่งซื้อเลย
+        </button>
       </section>
     </main>
   );

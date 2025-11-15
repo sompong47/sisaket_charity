@@ -23,6 +23,7 @@ interface FormData {
 interface ZizesPageProps {
   customerData?: FormData | null;
   onBack?: () => void;
+  onOrderComplete?: (orderData: any) => void;
 }
 
 type ShirtType = 'traditional' | 'polo' | null;
@@ -52,8 +53,29 @@ const SLIDER_IMAGES = [
   { src: '/sisaket2.jpg', alt: 'รูปที่ 3' }
 ];
 
+// ==================== HELPER FUNCTIONS ====================
+const generateOrderNumber = (): string => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `ORD${year}${month}${day}${random}`;
+};
+
+const formatDate = (date: Date): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  return date.toLocaleDateString('th-TH', options);
+};
+
 // ==================== MAIN COMPONENT ====================
-export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
+export default function ZizesPage({ customerData, onBack, onOrderComplete }: ZizesPageProps) {
   const router = useRouter();
 
   // State
@@ -69,27 +91,26 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
   // 🔒 ล็อก scroll เมื่อเปิด Modal
   // ===================================
   useEffect(() => {
-  let scrollY = 0;
+    let scrollY = 0;
 
-  if (showConfirmModal) {
-    scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-    document.body.style.width = "100%";
-  } else {
-    scrollY = parseInt(document.body.style.top || "0") * -1;
-    document.body.style.position = "";
-    document.body.style.top = "";
-    window.scrollTo(0, scrollY);
-  }
-}, [showConfirmModal]);
-
+    if (showConfirmModal) {
+      scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+    } else {
+      scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      window.scrollTo(0, scrollY);
+    }
+  }, [showConfirmModal]);
 
   // ==================== CALCULATIONS ====================
   const getTotalQuantity = (): number => {
-  return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
+    return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
   };
 
   const getTotalPrice = (): number => {
@@ -139,14 +160,41 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
   const handleConfirmOrder = (): void => {
     const shirtTypeLabel = SHIRT_TYPES.find(t => t.id === selectedType)?.label || '';
 
-    alert(`✅ สั่งซื้อสำเร็จ!
+    // สร้างข้อมูลคำสั่งซื้อครบชุด
+    const orderData = {
+      orderNumber: generateOrderNumber(),
+      customerName: customerData ? `${customerData.firstName} ${customerData.lastName}` : 'สมชัย จงรัมย์',
+      phone: customerData?.phone || '0984567897',
+      email: customerData?.email || 'somjai422@gmail.com',
+      address: customerData?.address || 'hghghghghghgh',
+      shirtType: shirtTypeLabel,
+      sizes: getSelectedSizes(),
+      totalQuantity: getTotalQuantity(),
+      shirtPrice: getTotalPrice(),
+      shippingCost: getShippingCost(),
+      grandTotal: getGrandTotal(),
+      orderDate: formatDate(new Date())
+    };
 
-แบบ: ${shirtTypeLabel}
-ขนาด: ${getSelectedSizes()}
-จำนวนรวม: ${getTotalQuantity()} ตัว
-ราคารวม: ${getGrandTotal().toLocaleString()} บาท`);
-
+    // ปิด modal
     setShowConfirmModal(false);
+
+    // 🔥 บันทึกข้อมูลลง localStorage
+    try {
+      localStorage.setItem('orderData', JSON.stringify(orderData));
+      
+      // ถ้ามี callback ให้ส่งให้ callback
+      if (onOrderComplete) {
+        onOrderComplete(orderData);
+      }
+      
+      // เปลี่ยนหน้าไป /slip
+      router.push('/slip');
+      
+    } catch (error) {
+      console.error('Error saving order data:', error);
+      alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    }
   };
 
   const handleCancelOrder = (): void => {
@@ -371,10 +419,10 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
             <h2 className={styles.modalTitle}>ยืนยันการสั่งซื้อ</h2>
             
             <div className={styles.modalInfo}>
-              <p><strong>ชื่อ-นามสกุล:</strong> สมชัย จงรัมย์</p>
-              <p><strong>โทรศัพท์:</strong> 0984567897</p>
-              <p><strong>อีเมล:</strong> somjai422@gmail.com</p>
-              <p><strong>ที่อยู่:</strong> hghghghghghgh</p>
+              <p><strong>ชื่อ-นามสกุล:</strong> {customerData ? `${customerData.firstName} ${customerData.lastName}` : 'สมชัย จงรัมย์'}</p>
+              <p><strong>โทรศัพท์:</strong> {customerData?.phone || '0984567897'}</p>
+              <p><strong>อีเมล:</strong> {customerData?.email || 'somjai422@gmail.com'}</p>
+              <p><strong>ที่อยู่:</strong> {customerData?.address || 'hghghghghghgh'}</p>
               <p><strong>รูปแบบเสื้อ:</strong> {SHIRT_TYPES.find(t => t.id === selectedType)?.label}</p>
             </div>
 
@@ -416,4 +464,3 @@ export default function ZizesPage({ customerData, onBack }: ZizesPageProps) {
     </div>
   );
 }
-  
