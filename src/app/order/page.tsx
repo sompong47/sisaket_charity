@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -27,6 +28,8 @@ interface FormErrors {
 
 // ==================== MAIN COMPONENT ====================
 export default function Page() {
+  const router = useRouter();
+  
   // State Management
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -85,7 +88,7 @@ export default function Page() {
 
     // Submit form
     console.log('📦 Form submitted:', formData);
-    window.location.href = '/zizes';
+    router.push('/zizes');
   };
 
   // ==================== RENDER ====================
@@ -107,6 +110,10 @@ export default function Page() {
             <div className={styles.step}>
               <div className={styles.stepNumber}>2</div>
               <span>เลือกแบบและขนาดเสื้อ</span>
+            </div>
+            <div className={styles.step}>
+              <div className={styles.stepNumber}>3</div>
+              <span>ชำระเงิน</span>
             </div>
           </div>
 
@@ -276,7 +283,7 @@ export default function Page() {
                 {/* Secondary Button */}
                 <button
                   className={styles.buttonSecondary}
-                  onClick={() => alert('กลับสู่หน้าหลัก')}
+                  onClick={() => router.push('/')}
                   type="button"
                 >
                   ← กลับสู่หน้าหลัก

@@ -226,6 +226,10 @@ export default function ZizesPage({ customerData, onBack, onOrderComplete }: Ziz
         <div className={styles.stepNumber}>2</div>
         <span>เลือกแบบและขนาดเสื้อ</span>
       </div>
+      <div className={styles.step}>
+              <div className={styles.stepNumber}>3</div>
+              <span>ชำระเงิน</span>
+            </div>
     </div>
   );
 
