@@ -11,8 +11,7 @@ export default function LoginPage() {
 
         {/* โลโก้ */}
         <div className="logo-box">
-          <img src="/logo1.png" alt="logo1" className="logo" />
-          <img src="/logo2.png" alt="logo2" className="logo" />
+          <img src="site-logo.png" alt="logo1" className="logo" />
         </div>
 
         <a href="/" className="back-link">กลับไปหน้าแรก</a>
@@ -22,7 +21,7 @@ export default function LoginPage() {
 
         {/* ปุ่ม Google */}
         <button className="google-btn">
-          <img src="/google.png" className="google-icon" />
+          <img src="google-color.png" className="google-icon" />
           Continue with Google
         </button>
 

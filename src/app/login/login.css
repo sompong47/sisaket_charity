@@ -65,8 +65,8 @@ body {
   margin-top: 20px;
   padding: 12px;
   border-radius: 12px;
-  border: 2px solid #d9dcff;
-  background: white;
+  border: 2px solid #e2e2e2;
+  background: rgb(0, 0, 0);
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -113,7 +113,7 @@ body {
 
 .login-btn {
   width: 100%;
-  background: #5f6af0;
+  background: #000000;
   color: rgb(224, 224, 224);
   padding: 12px 0;
   border: none;
