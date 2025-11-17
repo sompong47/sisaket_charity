@@ -42,18 +42,25 @@ body {
 }
 
 .register-text {
-  margin-top: 10px;
-  font-size: 15px;
-  color: #666;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #000000;
 }
 
 .register-text a {
-  color: #5f6af0;
+  color: #667eea;
+  font-weight: 700;
   text-decoration: none;
-  font-weight: 600;
+  transition: opacity .12s;
+}
+
+.register-text a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 .login-title {
+  color: #000000;
   margin-top: 25px;
   font-size: 22px;
   font-weight: 700;

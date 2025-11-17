@@ -1,0 +1,110 @@
+/* compact / themed register card */
+:root {
+  --accent: #667eea;
+  --accent-dark: #4b57d8;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(75,87,216,0.08);
+}
+
+.registerContainer {
+  min-height: calc(100vh - 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f3f6ff 0%, #eef2ff 100%);
+}
+
+.registerCard {
+  width: 100%;
+  max-width: 520px;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(99,102,241,0.06);
+}
+
+.title {
+  font-family: "Sarabun", sans-serif;
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+}
+
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(99,102,241,0.12);
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: box-shadow .12s, border-color .12s;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px rgba(102,126,234,0.08);
+}
+
+.btnSubmit {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(75,87,216,0.14);
+  transition: transform .12s, opacity .12s;
+}
+
+.btnSubmit:hover {
+  transform: translateY(-3px);
+  opacity: 0.98;
+}
+
+.loginText {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.loginLink {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+@media (max-width: 520px) {
+  .registerCard {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  .title { font-size: 18px; }
+  .input { padding: 10px; }
+  .btnSubmit { padding: 10px; }
+}
