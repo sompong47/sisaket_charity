@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, type ComponentType } from 'react';
+import { useState } from 'react';
 import Page from './page';
 import FutureZizes from '../zizes/page';
-
-// ensure Page is recognized as a component that accepts the onNext prop
-const PageCmp = Page as ComponentType<{ onNext?: (data: FormData) => void }>;
 
 export interface FormData {
   firstName: string;
@@ -24,16 +21,15 @@ export default function App() {
   return (
     <div>
       {currentPage === 'order' ? (
-        <PageCmp 
-          onNext={(data: FormData) => {
+        <Page 
+          {...({ onNext: (data: FormData) => {
             setCustomerData(data);
             setCurrentPage('selection');
-          }} 
+          }} as any)}
         />
       ) : (
         <FutureZizes 
-          customerData={customerData}
-          onBack={() => setCurrentPage('order')} 
+          {...({ customerData, onBack: () => setCurrentPage('order') } as any)}
         />
       )}
     </div>

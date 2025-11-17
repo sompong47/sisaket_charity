@@ -1,159 +1,254 @@
 "use client";
 
 import "./globals.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [selectedType, setSelectedType] = useState('normal');
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
   const router = useRouter();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    // Create particles
+    const newParticles = Array.from({length: 20}, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100
+    }));
+    setParticles(newParticles);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const normalSizes = [
+    { size: 'L', count: 8303, color: '#3b82f6' },
+    { size: 'M', count: 6977, color: '#8b5cf6' },
+    { size: 'XL', count: 3277, color: '#ec4899' },
+    { size: 'S', count: 3693, color: '#10b981' },
+    { size: '2XL', count: 2057, color: '#f59e0b' },
+    { size: '3XL', count: 655, color: '#ef4444' },
+  ];
+
+  const poloSizes = [
+    { size: 'M', count: 932, color: '#64748b' },
+    { size: 'L', count: 888, color: '#475569' },
+    { size: 'S', count: 829, color: '#334155' },
+    { size: 'XL', count: 706, color: '#1e293b' },
+    { size: '2XL', count: 298, color: '#0f172a' },
+  ];
+
+  const currentSizes = selectedType === 'normal' ? normalSizes : poloSizes;
+
   return (
-    <div className="page-container">
-      <div className="content-wrapper">
-        {/* Header */}
-        <div className="header-card">
-          <div className="header-flex">
-            <div>
-              <h1 className="page-title">เสื้อเฉลิมฉลองเมือง 243 ปี</h1>
-            </div>
-          </div>
-        </div>
+    <div className="page">
+      {/* Animated Background */}
+      <div className="animated-bg">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              animationDelay: `${particle.id * 0.2}s`
+            }}
+          />
+        ))}
+      </div>
 
-        {/* Main Content Grid */}
-        <div className="main-grid">
-          {/* Left Column - Product Image */}
-          <div className="product-card">
-            <div className="product-image">
-              <img 
-                src="/shirt_243_black.jpg" 
-                alt="เสื้อฉลองเมือง 243 ปี"
-              />
-            </div>
-            
-            {/* Product Details */}
-            <div className="product-details">
-              <div className="price-row">
-                <span className="price-label">ราคา</span>
-                <span className="price-value">199 บาท</span>
-              </div>
-            </div>
+      {/* Top Navigation */}
+      <nav className={`top-navigation ${scrolled ? 'scrolled' : ''}`}>
+        <div className="nav-container">
+          <div className="nav-logo">
+            <div className="logo-icon"></div>
+            <span className="logo-text">เสื้อเฉลิมฉลองเมือง 243 ปี</span>
           </div>
-
-          {/* Right Column - Order Form */}
-          <div className="order-column">
-            {/* Order Button */}
+          
+          <div className="nav-menu">
             <button 
-              className="btn-order-main"
-              onClick={() => router.push('/order')}
+              className="user-btn"
+              onClick={() => setShowUserMenu(!showUserMenu)}
             >
-              สั่งซื้อเสื้อ
+              <span className="user-avatar"></span>
+              <span className="user-text">สมชัน</span>
+              <span className="dropdown-arrow">▼</span>
             </button>
 
-            {/* Stats Cards */}
-            <div className="stats-grid">
-              <div className="stat-card purple">
-                <div className="stat-number">31619 ตัว</div>
-                <div className="stat-label">เสื้อสีขาว (รอบที่สิน)</div>
+            {showUserMenu && (
+              <div className="user-dropdown">
+                <div className="dropdown-header">
+                  <span className="dropdown-avatar"></span>
+                  <span className="dropdown-name">นาย สมชัน</span>
+                </div>
+                <button className="dropdown-item" onClick={() => router.push('/order')}>
+                   สั่งซื้อเสื้อ
+                </button>
+                <button className="dropdown-item">
+                   ประวัติการสั่งซื้อ
+                </button>
+                <button className="dropdown-item logout" onClick={() => router.push('/login')}>
+                   ออกจากระบบ
+                </button>
               </div>
-              
-              <div className="stat-card teal">
-                <div className="stat-number">1899 ออเดอร์</div>
-                <div className="stat-label">จำนวนออเดอร์ (รอบที่สิน)</div>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-container">
+          <div className="hero-badge">✨ ฉลองเมือง 243 ปี</div>
+          <h1 className="hero-title">
+            เสื้อเฉลิมฉลอง
+            <span className="gradient-text">เมือง 243 ปี</span>
+          </h1>
+          <p className="hero-subtitle">
+            หอการค้าจังหวัดศรีสะเกษร่วมกับบริษัทประชารัฐรักสามัคคีศรีสะเกษ (วิสาหกิจเพื่อสังคม) จำกัด จัดจำหน่ายเสื้อสู่ขวัญบ้าน บายศรีเมือง รุ่งเรือง 243 ปีโดยรายได้จากการขายเสื้อหลังหักค่าใช้จ่าย จะนำมาเป็นเงินจัดงาน สู่ขวัญบ้าน บายศรีเมือง รุ่งเรือง 243 ปี
+          </p>
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={() => router.push('/order')}>
+              <span>สั่งซื้อเลย</span>
+              <span className="btn-arrow">→</span>
+            </button>
+            <button className="btn-secondary" onClick={() => window.open('https://www.facebook.com/share/p/1CyNAH9ARu/', '_blank')}>
+              <span>ดูรายละเอียด</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="content-container">
+        
+        {/* Product Showcase */}
+        <section className="product-showcase">
+          <div className="showcase-grid">
+            <div className="product-image-card">
+              <div className="image-wrapper">
+                <img src="/shirt_243_black.jpg" alt="เสื้อ 243 ปี" />
+                <div className="image-overlay">
+                </div>
+              </div>
+              <div className="price-banner">
+                <span className="price-label">ราคาพิเศษ</span>
+                <span className="price-amount">198 บาท</span>
               </div>
             </div>
 
-            {/* Type Selection */}
-            <div className="stats-card">
-              <h3 className="stats-title">สถิติการขายเสื้อ</h3>
-              
-              {/* Tabs */}
-              <div className="tab-buttons">
-                <button 
-                  onClick={() => setSelectedType('normal')}
-                  className={`tab-btn ${selectedType === 'normal' ? 'active-blue' : 'inactive'}`}
-                >
-                  เสื้อสีขาว
-                </button>
-                <button 
-                  onClick={() => setSelectedType('polo')}
-                  className={`tab-btn ${selectedType === 'polo' ? 'active-gray' : 'inactive'}`}
-                >
-                  เสื้อโปโลดำ
-                </button>
+            <div className="product-info-card">
+              <div className="info-header">
+                <h2>ข้อมูลสินค้า</h2>
+                <span className="stock-badge"> พร้อมส่ง</span>
               </div>
-
-              {/* Size Stats */}
-              <div className="stats-info">
-                {selectedType === 'normal' && (
-                  <div className="info-box blue">
-                    <div className="info-text">เสื้อสีขาว: 27328 ตัว</div>
-                    <div className="info-text">จำนวนออเดอร์: 1520 รายการ</div>
-                  </div>
-                )}
-
-                {selectedType === 'polo' && (
-                  <div className="info-box gray">
-                    <div className="info-text">เสื้อโปโลดำ: 4291 ตัว</div>
-                    <div className="info-text">จำนวนออเดอร์: 379 รายการ</div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Size Selection */}
-            <div className="stats-card">
-              <h3 className="size-section-title">
-                จำนวนเสื้อแล้วเสาะได้ - {selectedType === 'normal' ? 'เสื้อสีขาว' : 'เสื้อโปโลดำ'}
-              </h3>
               
-              <div className="size-tags">
-                {selectedType === 'normal' ? (
-                  <>
-                    <span className="size-tag blue">L: 8303 ตัว</span>
-                    <span className="size-tag blue">2XL: 2057 ตัว</span>
-                    <span className="size-tag blue">3XL: 655 ตัว</span>
-                    <span className="size-tag blue">M: 6977 ตัว</span>
-                    <span className="size-tag blue">S: 3693 ตัว</span>
-                    <span className="size-tag blue">XL: 3277 ตัว</span>
-                    <span className="size-tag blue">4XL: 799 ตัว</span>
-                    <span className="size-tag blue">2XL: 1799 ตัว</span>
-                    <span className="size-tag blue">3XL: 640 ตัว</span>
-                    <span className="size-tag blue">5XL: 106 ตัว</span>
-                    <span className="size-tag blue">6XL: 1 ตัว</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="size-tag gray">2XL: 298 ตัว</span>
-                    <span className="size-tag gray">3XL: 105 ตัว</span>
-                    <span className="size-tag gray">M: 932 ตัว</span>
-                    <span className="size-tag gray">XL: 706 ตัว</span>
-                    <span className="size-tag gray">4XL: 129 ตัว</span>
-                    <span className="size-tag gray">S: 829 ตัว</span>
-                    <span className="size-tag gray">XL: 329 ตัว</span>
-                    <span className="size-tag gray">L: 888 ตัว</span>
-                    <span className="size-tag gray">6XL: 3 ตัว</span>
-                    <span className="size-tag gray">4XL: 52 ตัว</span>
-                    <span className="size-tag gray">10XL: 1 ตัว</span>
-                    <span className="size-tag gray">8XL: 4 ตัว</span>
-                    <span className="size-tag gray">7XL: 3 ตัว</span>
-                  </>
-                )}
+              <div className="stats-showcase">
+                <div className="stat-box stat-primary">
+                  <div className="stat-icon"></div>
+                  <div className="stat-content">
+                    <span className="stat-number">31,619</span>
+                    <span className="stat-label">ตัว</span>
+                  </div>
+                  <span className="stat-description">เสื้อสีขาว</span>
+                </div>
+                
+                <div className="stat-box stat-secondary">
+                  <div className="stat-icon"></div>
+                  <div className="stat-content">
+                    <span className="stat-number">1,899</span>
+                    <span className="stat-label">รายการ</span>
+                  </div>
+                  <span className="stat-description">ออเดอร์ทั้งหมด</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Footer Info */}
-        <div className="footer-card">
-          <p className="footer-text footer-title">พัฒนาโดย</p>
-          <p className="footer-text">นักศึกษามหาวิทยาลัยราชภัฏศรีสะเกษ</p>
-          <div className="footer-names">
-            <p className="footer-text footer-small">นาย สมพง ใยคำ 6612732131</p>
-            <p className="footer-text footer-small">นาย สุพัน ชัยนอก 6612732136</p>
-            <p className="footer-text footer-small">นาย สรรพสิทธิ์ ยาเคน 6612732132</p>
+        {/* Size Selection */}
+        <section className="size-section">
+          <div className="section-header">
+            <h2 className="section-title">เลือกแบบเสื้อที่คุณชอบ</h2>
+            <p className="section-subtitle">เรามีให้เลือก 2 แบบ พร้อมหลากหลายไซซ์</p>
           </div>
-        </div>
+
+          <div className="type-selector">
+            <button
+              className={`type-btn ${selectedType === 'normal' ? 'active' : ''}`}
+              onClick={() => setSelectedType('normal')}
+            >
+              <span className="type-icon"></span>
+              <span className="type-name">เสื้อสีขาว</span>
+              <span className="type-count">27,328 ตัว</span>
+            </button>
+            
+            <button
+              className={`type-btn ${selectedType === 'polo' ? 'active' : ''}`}
+              onClick={() => setSelectedType('polo')}
+            >
+              <span className="type-icon"></span>
+              <span className="type-name">เสื้อโปโลดำ</span>
+              <span className="type-count">4,291 ตัว</span>
+            </button>
+          </div>
+
+          <div className="sizes-display">
+            <h3 className="sizes-title">
+              ไซซ์ที่มีจำหน่าย - {selectedType === 'normal' ? 'เสื้อสีขาว' : 'เสื้อโปโลดำ'}
+            </h3>
+            <div className="sizes-grid">
+              {currentSizes.map((item, index) => (
+                <div
+                  key={index}
+                  className="size-card"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="size-header">
+                    <span className="size-name">{item.size}</span>
+                    <div 
+                      className="size-indicator"
+                      style={{ background: item.color }}
+                    />
+                  </div>
+                  <div className="size-count">{item.count.toLocaleString()}</div>
+                  <div className="size-label">ตัว</div>
+                  <div 
+                    className="size-progress"
+                    style={{
+                      width: `${(item.count / Math.max(...currentSizes.map(s => s.count))) * 100}%`,
+                      background: item.color
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="page-footer">
+          <div className="footer-content">
+            <div className="footer-logo">
+              <div className="footer-icon"></div>
+              <span>พัฒนาโดย</span>
+            </div>
+            <p className="footer-uni">นักศึกษามหาวิทยาลัยราชภัฏศรีสะเกษ</p>
+            <div className="footer-team">
+              <span>นาย สมพง ใยคำ</span>
+              <span>นาย สุพัน ชัยนอก</span>
+              <span>นาย สรรพสิทธิ์ ยาเคน</span>
+            </div>
+          </div>
+        </footer>
+
       </div>
     </div>
   );

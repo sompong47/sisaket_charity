@@ -1,162 +1,318 @@
-/* ==================== 
-   MAIN HEADER 
-   ==================== */
-.mainHeader {
-  background: white;
-  padding: 1.2rem 1.5rem;
-  border-bottom: 2px solid #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-.mainHeaderTitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #222;
+/* =================== Global Styles =================== */
+:global(*) {
   margin: 0;
-  text-align: left;
-}
-
-/* ==================== 
-   STEPS NAVIGATION 
-   ==================== */
-.stepsContainer {
-  background: #f5f5f5;
   padding: 0;
-  border-bottom: none;
+  box-sizing: border-box;
 }
 
-.stepsWrapper {
+:global(body) {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* =================== Page Container =================== */
+.page {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* =================== Animated Background =================== */
+.animatedBg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #90a4ae 0%, #607d8b 50%, #455a64 100%);
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100px, -100vh);
+    opacity: 0;
+  }
+}
+
+/* =================== Navigation =================== */
+.topNavigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.topNavigation.scrolled {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.navContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  margin: 2rem auto 1.5rem;
-  padding: 1.2rem;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  max-width: 1200px;
 }
 
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.logoText {
+  background: linear-gradient(135deg, #fff 0%, #b0bec5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.navMenu {
+  position: relative;
+}
+
+.userBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.userBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(120, 144, 156, 0.3);
+}
+
+.userAvatar {
+  font-size: 1.5rem;
+}
+
+.dropdownArrow {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.userBtn:hover .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 1rem);
+  right: 0;
+  min-width: 280px;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(144, 164, 174, 0.2), rgba(96, 125, 139, 0.2));
+}
+
+.dropdownAvatar {
+  font-size: 2rem;
+}
+
+.dropdownName {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  padding-left: 1.5rem;
+}
+
+.dropdownItem.logout {
+  color: #ff6b6b;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdownItem.logout:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* =================== Order Content =================== */
+.orderContent {
+  padding: 120px 2rem 4rem;
+}
+
+.orderContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* =================== Order Header =================== */
+.orderHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.orderTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #cfd8dc 50%, #90a4ae 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =================== Steps Navigation =================== */
 .stepsNav {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2.5rem;
-  padding: 0;
-  background: transparent;
-  position: relative;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
 }
 
-.stepItem {
+.step {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  position: relative;
-  color: #999;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.stepItem::after {
-  content: '';
-  position: absolute;
-  right: -1.25rem;
-  width: 1.5rem;
-  height: 2px;
-  background: #e0e0e0;
-  top: 50%;
-  transform: translateY(-50%);
+.stepActive {
+  color: #ffffff;
 }
 
-.stepItem:last-child::after {
-  display: none;
-}
-
-.stepItem:hover {
-  background: #f9fafb;
-}
-
-.stepItem.completed .stepNumber {
-  background: #e5e5e5;
-  color: #666;
-}
-
-.stepItem.active .stepNumber {
-  background: #2563eb;
-  color: white;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+.completed {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .stepNumber {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: #e5e5e5;
-  color: #999;
+  background: rgba(255, 255, 255, 0.15); /* สีเทาใสแบบ Step 3 */
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
 }
 
-.stepText {
-  font-size: 0.875rem;
-  color: #999;
-  white-space: nowrap;
-  font-weight: 500;
+/* ---- active ก็ให้เป็นแบบเดียวกัน ---- */
+.stepActive .stepNumber {
+  background: rgba(255, 255, 255, 0.25); /* เพิ่มสว่างขึ้นนิด */
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
-.stepItem.active .stepText {
-  color: #2563eb;
-  font-weight: 500;
+/* ---- completed ก็เหมือนกัน ---- */
+.completed .stepNumber {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0.9;
 }
 
-/* ==================== 
-   MAIN CONTAINER 
-   ==================== */
-.container {
-  min-height: calc(100vh - 200px);
-  background: #ffffff !important;
-  padding: 3rem 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(50px, 50px); }
-}
-
-.contentWrapper {
-  max-width: 600px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-/* ==================== 
-   SLIP CARD 
-   ==================== */
+/* =================== Slip Card =================== */
 .slipCard {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(30, 58, 138, 0.15), 0 0 0 1px rgba(30, 58, 138, 0.05);
   overflow: hidden;
-  animation: slideUp 0.5s ease-out;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUpAnim 0.5s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes slideUpAnim {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -167,11 +323,9 @@
   }
 }
 
-/* ==================== 
-   SLIP HEADER 
-   ==================== */
+/* =================== Slip Header =================== */
 .slipHeader {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #667eea);
   padding: 2rem 1.5rem;
   text-align: center;
   color: white;
@@ -230,61 +384,65 @@
   z-index: 1;
 }
 
-/* ==================== 
-   SLIP CONTENT 
-   ==================== */
+/* =================== Slip Content =================== */
 .slipContent {
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
 /* Order Number */
 .orderNumber {
   text-align: center;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 10px;
+  padding: 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12px;
   margin-bottom: 1.5rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .orderLabel {
-  font-size: 12px;
-  color: #6c757d;
-  margin-bottom: 0.25rem;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 .orderCode {
   font-size: 20px;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #667eea;
   letter-spacing: 1px;
 }
 
 /* Info Sections */
 .infoSection {
   margin-bottom: 1.5rem;
+  background: rgba(102, 126, 234, 0.05);
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .sectionTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1e3a8a;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e9ecef;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .sectionIcon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .infoRow {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f1f3f5;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .infoRow:last-child {
@@ -292,60 +450,69 @@
 }
 
 .infoLabel {
-  font-size: 13px;
-  color: #6c757d;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .infoValue {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: #212529;
+  color: #1f2937;
   text-align: right;
   max-width: 60%;
   word-break: break-word;
 }
 
-/* ==================== 
-   PRICE SUMMARY 
-   ==================== */
+/* =================== Price Summary =================== */
 .priceSummary {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
   margin-bottom: 1.5rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .priceRow {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  font-size: 14px;
+  padding: 0.75rem 0;
+  font-size: 15px;
+  color: #374151;
+}
+
+.priceRow strong {
+  color: #1f2937;
+  font-weight: 700;
 }
 
 .priceRow.total {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 2px solid #dee2e6;
-  font-size: 17px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid rgba(102, 126, 234, 0.3);
+  font-size: 18px;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #667eea;
 }
 
-/* ==================== 
-   PAYMENT SECTION 
-   ==================== */
+.priceRow.total strong {
+  color: #667eea;
+}
+
+/* =================== Payment Section =================== */
 .paymentSection {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  border-radius: 10px;
-  padding: 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+  border-radius: 12px;
+  padding: 1.5rem;
   margin-bottom: 1.5rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .paymentTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1e3a8a;
-  margin-bottom: 0.75rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -353,117 +520,108 @@
 
 .bankInfo {
   background: white;
-  border-radius: 8px;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .bankRow {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .bankLabel {
-  color: #495057;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .bankValue {
   font-weight: 600;
-  color: #212529;
+  color: #1f2937;
 }
 
 .accountNumber {
   font-size: 16px;
-  color: #1e3a8a;
+  color: #667eea;
   letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .qrCode {
   text-align: center;
-  padding: 0.75rem;
+  padding: 1rem;
   background: white;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .qrImage {
   border-radius: 8px;
-  border: 2px solid #ddd;
+  border: 2px solid #e5e7eb;
   width: 160px;
   height: 160px;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  object-fit: cover;
 }
 
-/* ==================== 
-   BUTTONS 
-   ==================== */
+/* =================== Buttons =================== */
 .buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
 .primaryButton {
   width: 100%;
-  padding: 0.85rem;
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea);
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .primaryButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .secondaryButton {
   width: 100%;
-  padding: 0.85rem;
+  padding: 1rem;
   background: white;
-  color: #1e3a8a;
-  border: 2px solid #1e3a8a;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .secondaryButton:hover {
-  background: #f8f9fa;
+  background: rgba(102, 126, 234, 0.05);
 }
 
-/* ==================== 
-   NOTES 
-   ==================== */
+/* =================== Notes =================== */
 .notes {
-  background: #fff3cd;
-  border-left: 4px solid #ffc107;
-  padding: 0.75rem;
+  background: rgba(251, 191, 36, 0.1);
+  border-left: 4px solid #fbbf24;
+  padding: 1rem;
   border-radius: 8px;
 }
 
 .notesTitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: #856404;
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
   margin-bottom: 0.5rem;
 }
 
@@ -474,12 +632,12 @@
 }
 
 .notesList li {
-  font-size: 12px;
-  color: #856404;
+  font-size: 13px;
+  color: #78350f;
   padding: 0.25rem 0;
   padding-left: 1.25rem;
   position: relative;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .notesList li:before {
@@ -487,87 +645,55 @@
   position: absolute;
   left: 0.4rem;
   font-weight: bold;
+  color: #fbbf24;
 }
 
-/* ==================== 
-   LOADING STATE 
-   ==================== */
+/* =================== Loading =================== */
 .loading {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #1e3a8a;
-  background: #f5f5f5;
+  color: #ffffff;
 }
 
-/* ==================== 
-   RESPONSIVE 
-   ==================== */
+/* =================== Responsive =================== */
 @media (max-width: 1024px) {
-  .stepsWrapper {
-    margin: 1.5rem auto 1.25rem;
-  }
-
-  .stepsNav {
-    gap: 1.5rem;
-  }
-
-  .stepText {
-    font-size: 14px;
+  .orderTitle {
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .mainHeader {
-    padding: 1rem 1.5rem;
+  .navContainer {
+    padding: 0 1rem;
   }
 
-  .mainHeaderTitle {
-    font-size: 20px;
+  .userText {
+    display: none;
   }
 
-  .stepsWrapper {
-    margin: 1.25rem 1rem;
-    padding: 1rem;
+  .orderContent {
+    padding: 100px 1rem 2rem;
   }
 
-  .stepsNav {
-    gap: 1.5rem;
-  }
-
-  .stepItem::after {
-    right: -1rem;
-    width: 1rem;
-  }
-
-  .stepText {
-    font-size: 14px;
-  }
-
-  .container {
-    padding: 2rem 0.5rem;
-  }
-
-  .slipCard {
-    border-radius: 16px;
-  }
-
-  .slipHeader {
+  .orderHeader {
     padding: 1.5rem;
   }
 
-  .successIcon {
-    font-size: 3rem;
+  .orderTitle {
+    font-size: 1.75rem;
   }
 
-  .slipTitle {
-    font-size: 22px;
+  .stepsNav {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .slipContent {
-    padding: 1.25rem;
+    padding: 1.5rem;
   }
 
   .infoValue {
@@ -576,36 +702,8 @@
 }
 
 @media (max-width: 640px) {
-  .mainHeader {
-    padding: 1rem;
-  }
-
-  .mainHeaderTitle {
-    font-size: 20px;
-  }
-
-  .stepsWrapper {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-
-  .stepsNav {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .stepItem::after {
-    display: none;
-  }
-
-  .slipHeader {
-    padding: 1.25rem;
-  }
-
   .slipContent {
-    padding: 1rem;
+    padding: 1.25rem;
   }
 
   .orderCode {
@@ -625,5 +723,9 @@
   .qrImage {
     width: 140px;
     height: 140px;
+  }
+
+  .buttonGroup {
+    gap: 0.75rem;
   }
 }
