@@ -1,0 +1,719 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* =================== Global Styles =================== */
+:global(*) {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:global(body) {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* =================== Page Container =================== */
+.page {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* =================== Animated Background =================== */
+.animatedBg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%);
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100px, -100vh);
+    opacity: 0;
+  }
+}
+
+/* =================== Navigation =================== */
+.topNavigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.topNavigation.scrolled {
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.navContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.logoText {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.navMenu {
+  position: relative;
+}
+
+.userBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.userBtn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.userAvatar {
+  font-size: 1.5rem;
+}
+
+.dropdownArrow {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.userBtn:hover .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 1rem);
+  right: 0;
+  min-width: 280px;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+}
+
+.dropdownAvatar {
+  font-size: 2rem;
+}
+
+.dropdownName {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dropdownItem:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: white;
+  padding-left: 1.5rem;
+}
+
+.dropdownItem.logout {
+  color: #ef4444;
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dropdownItem.logout:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* =================== Admin Content =================== */
+.adminContent {
+  padding: 120px 2rem 4rem;
+}
+
+.adminContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* =================== Admin Header =================== */
+.adminHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: rgba(59, 130, 246, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 20px;
+}
+
+.adminTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.adminSubtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.125rem;
+}
+
+/* =================== Tabs =================== */
+.tabsContainer {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 1rem 2rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: white;
+}
+
+.tabActive {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* =================== Dashboard Content =================== */
+.dashboardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =================== Statistics Grid =================== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  padding: 2rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+}
+
+.statPrimary {
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.statWarning {
+  background: rgba(251, 191, 36, 0.1);
+  border: 2px solid rgba(251, 191, 36, 0.3);
+}
+
+.statSuccess {
+  background: rgba(34, 197, 94, 0.1);
+  border: 2px solid rgba(34, 197, 94, 0.3);
+}
+
+.statInfo {
+  background: rgba(139, 92, 246, 0.1);
+  border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.statIcon {
+  font-size: 3rem;
+  flex-shrink: 0;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* =================== Section =================== */
+.section {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+/* =================== Orders List =================== */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.orderItem:hover {
+  background: rgba(59, 130, 246, 0.05);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.orderInfo {
+  flex: 1;
+}
+
+.orderNumber {
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 0.25rem;
+}
+
+.orderCustomer {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+}
+
+.orderDetails {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 1rem;
+}
+
+.orderQuantity {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.orderPrice {
+  font-weight: 700;
+  color: #22c55e;
+}
+
+/* =================== Status Badge =================== */
+.statusBadge {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statusPending {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.statusConfirmed {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.statusShipped {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.statusCompleted {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.statusCancelled {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* =================== Orders Content =================== */
+.ordersContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =================== Filters Bar =================== */
+.filtersBar {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.searchInput:focus {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.filterSelect {
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.filterSelect:hover {
+  border-color: #3b82f6;
+}
+
+/* =================== Table =================== */
+.tableContainer {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ordersTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ordersTable thead {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.ordersTable th {
+  padding: 1.25rem;
+  text-align: left;
+  font-weight: 700;
+  color: #60a5fa;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ordersTable td {
+  padding: 1.25rem;
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+}
+
+.ordersTable tbody tr {
+  transition: all 0.2s ease;
+}
+
+.ordersTable tbody tr:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.orderNumberCell {
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.priceCell {
+  font-weight: 700;
+  color: #22c55e;
+}
+
+/* =================== Action Buttons =================== */
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btnView,
+.btnEdit,
+.btnDelete {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnView {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.btnView:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.btnEdit {
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.btnEdit:hover {
+  background: rgba(251, 191, 36, 0.3);
+  transform: translateY(-2px);
+}
+
+.btnDelete {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btnDelete:hover {
+  background: rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+/* =================== Coming Soon =================== */
+.comingSoon {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 20px;
+}
+
+.comingSoonIcon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.comingSoon h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 0.5rem;
+}
+
+.comingSoon p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.125rem;
+}
+
+/* =================== Responsive =================== */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .navContainer {
+    padding: 0 1rem;
+  }
+
+  .userText {
+    display: none;
+  }
+
+  .adminContent {
+    padding: 100px 1rem 2rem;
+  }
+
+  .adminTitle {
+    font-size: 2rem;
+  }
+
+  .tabsContainer {
+    padding: 0.75rem;
+  }
+
+  .tab {
+    padding: 0.75rem 1.5rem;
+    font-size: 14px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtersBar {
+    flex-direction: column;
+  }
+
+  .tableContainer {
+    overflow-x: auto;
+  }
+
+  .ordersTable {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 640px) {
+  .adminHeader {
+    padding: 1.5rem;
+  }
+
+  .adminTitle {
+    font-size: 1.75rem;
+  }
+
+  .section {
+    padding: 1.5rem;
+  }
+}
