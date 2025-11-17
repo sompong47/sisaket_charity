@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap");
+
+body {
+  font-family: "Sarabun", sans-serif;
+}
+
+.orders-container {
+  padding: 30px;
+  max-width: 1300px;
+  margin: auto;
+}
+
+/* Header */
+.orders-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 15px;
+}
+
+.top-button {
+  align-self: flex-end;
+  margin-top: -40px;
+}
+
+/* Summary Cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.card {
+  padding: 25px;
+  border-radius: 14px;
+  color: white;
+  text-align: left;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.card.purple { background: #6a5af9; }
+.card.green { background: #38c964; }
+.card.blue  { background: #00b7ff; }
+.card.orange{ background: #ff9900; }
+
+/* Order Section */
+.orders-list {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.list-title {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.no-orders-box {
+  text-align: center;
+  padding: 40px 20px;
+  color: #777;
+}
+
+.no-orders-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.btn-primary {
+  background: #6a5af9;
+  padding: 11px 28px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 14px;
+  color: #666;
+}
+
+.dev-name {
+  font-weight: 700;
+  margin-top: -4px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}
