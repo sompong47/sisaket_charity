@@ -64,16 +64,16 @@ export default function Page() {
         ))}
       </div>
 
-      {/* Top Navigation */}
+      {/* TOP NAVIGATION */}
       <nav className={`top-navigation ${scrolled ? 'scrolled' : ''}`}>
         <div className="nav-container">
           <div className="nav-logo">
             <div className="logo-icon"></div>
             <span className="logo-text">เสื้อเฉลิมฉลองเมือง 243 ปี</span>
           </div>
-          
+
           <div className="nav-menu">
-            <button 
+            <button
               className="user-btn"
               onClick={() => setShowUserMenu(!showUserMenu)}
             >
@@ -88,14 +88,26 @@ export default function Page() {
                   <span className="dropdown-avatar"></span>
                   <span className="dropdown-name">นาย สมชัน</span>
                 </div>
-                <button className="dropdown-item" onClick={() => router.push('/order')}>
-                   สั่งซื้อเสื้อ
+
+                <button
+                  className="dropdown-item"
+                  onClick={() => router.push('/order')}
+                >
+                  สั่งซื้อเสื้อ
                 </button>
-                <button className="dropdown-item">
-                   ประวัติการสั่งซื้อ
+
+                <button
+                  className="dropdown-item"
+                  onClick={() => router.push('/orders')}
+                >
+                  ประวัติการสั่งซื้อ
                 </button>
-                <button className="dropdown-item logout" onClick={() => router.push('/login')}>
-                   ออกจากระบบ
+
+                <button
+                  className="dropdown-item logout"
+                  onClick={() => router.push('/login')}
+                >
+                  ออกจากระบบ
                 </button>
               </div>
             )}
