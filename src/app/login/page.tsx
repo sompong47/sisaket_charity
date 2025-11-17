@@ -16,6 +16,10 @@ export default function LoginPage() {
 
         <a href="/" className="back-link">กลับไปหน้าแรก</a>
 
+         {/* ลิงก์ไปหน้า Register */}
+        <p className="register-text">
+          ยังไม่มีบัญชี? <a href="/register">สมัครสมาชิก</a>
+        </p>
 
         <h2 className="login-title">เข้าสู่ระบบ</h2>
 
@@ -46,6 +50,8 @@ export default function LoginPage() {
 
           <button className="login-btn">เข้าสู่ระบบ</button>
         </div>
+
+
 
       </div>
     </div>
