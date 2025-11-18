@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Sisaket Charity
+เว็บแอปพลิเคชันสำหรับการบริหารจัดการกิจกรรมการกุศลในจังหวัดศรีสะเกษ
+📋 เกี่ยวกับโครงการ
+Sisaket Charity เป็นแพลตฟอร์มที่พัฒนาขึ้นเพื่อช่วยเหลือและอำนวยความสะดวกในการจัดการกิจกรรมการกุศล การรับบริจาค และการติดตามผลการช่วยเหลือในพื้นที่จังหวัดศรีสะเกษ
+✨ ฟีเจอร์หลัก
+หน้าเว็ป
+<img width="562" height="886" alt="สกรีนช็อต 2025-11-19 020610" src="https://github.com/user-attachments/assets/494b8853-8891-4592-b2d8-224f785f6755" />
+<img width="732" height="529" alt="สกรีนช็อต 2025-11-19 020555" src="https://github.com/user-attachments/assets/f654f655-069f-454e-98c1-fccccecf90f4" />
+<img width="435" height="742" alt="สกรีนช็อต 2025-11-19 020542" src="https://github.com/user-attachments/assets/479a8317-488c-40e9-9ec3-0154cd0a6120" />
 
-## Getting Started
 
-First, run the development server:
+📊 ระบบจัดการข้อมูลกิจกรรมการกุศล
+💰 ระบบรับบริจาคและติดตามยอดบริจาค
+👥 ระบบจัดการผู้รับผลประโยชน์
+📱 Responsive Design รองรับทุกอุปกรณ์
+🔐 ระบบจัดการผู้ใช้งาน
 
-```bash
-npm run dev
-# or
+🚀 เทคโนโลยีที่ใช้
+
+Next.js - React Framework
+TypeScript - Type Safety
+Tailwind CSS - Styling
+Geist Font - Typography
+
+📦 การติดตั้ง
+ความต้องการของระบบ
+
+Node.js 18.0 หรือสูงกว่า
+npm, yarn, pnpm หรือ bun
+
+ขั้นตอนการติดตั้ง
+
+Clone repository
+
+bashgit clone https://github.com/sompong47/sisaket_charity.git
+cd sisaket_charity
+
+ติดตั้ง dependencies
+
+bashnpm install
+# หรือ
+yarn install
+# หรือ
+pnpm install
+# หรือ
+bun install
+
+รัน development server
+
+bashnpm run dev
+# หรือ
 yarn dev
-# or
+# หรือ
 pnpm dev
-# or
+# หรือ
 bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิดเบราว์เซอร์ที่ http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🛠️ การพัฒนา
+โครงสร้างโปรเจค
+sisaket_charity/
+├── app/              # Next.js App Router
+├── components/       # React Components
+├── public/          # Static Files
+├── styles/          # Global Styles
+└── lib/             # Utility Functions
+การแก้ไข
+เริ่มต้นแก้ไขได้ที่ไฟล์ app/page.tsx หน้าเว็บจะอัพเดทอัตโนมัติเมื่อมีการแก้ไข
+🚢 การ Deploy
+Deploy บน Vercel (แนะนำ)
+วิธีที่ง่ายที่สุดในการ deploy Next.js app คือการใช้ Vercel Platform
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Push code ขึ้น GitHub
+Import project ใน Vercel
+Deploy อัตโนมัติ
 
-## Learn More
+ดูรายละเอียดเพิ่มเติมที่ Next.js deployment documentation
+📚 เอกสารประกอบ
 
-To learn more about Next.js, take a look at the following resources:
+Next.js Documentation - เรียนรู้เกี่ยวกับฟีเจอร์และ API ของ Next.js
+Learn Next.js - บทเรียน Next.js แบบ interactive
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🤝 การมีส่วนร่วม
+ยินดีรับ Pull Requests และ Issues ทุกรูปแบบ!
+📝 License
+MIT
+👤 ผู้พัฒนา
 
-## Deploy on Vercel
+sompong47 - GitHub
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📞 ติดต่อ
+หากมีคำถามหรือข้อเสนอแนะ กรุณาติดต่อผ่าน GitHub Issues
