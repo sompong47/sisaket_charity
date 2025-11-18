@@ -133,14 +133,14 @@ export default function AdminPage() {
       <nav className={`${styles.topNavigation} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.navContainer}>
           <div className={styles.navLogo}>
-            <span className={styles.logoText}>🎛️ Admin Dashboard</span>
+            <span className={styles.logoText}> Admin Dashboard</span>
           </div>
           <div className={styles.navMenu}>
             <button
               className={styles.userBtn}
               onClick={() => setShowDropdown(!showDropdown)}
             >
-              <span className={styles.userAvatar}>👤</span>
+              <span className={styles.userAvatar}></span>
               <span className={styles.userText}>ผู้ดูแลระบบ</span>
               <span className={styles.dropdownArrow}>▼</span>
             </button>
@@ -148,17 +148,17 @@ export default function AdminPage() {
             {showDropdown && (
               <div className={styles.userDropdown}>
                 <div className={styles.dropdownHeader}>
-                  <span className={styles.dropdownAvatar}>👤</span>
+                  <span className={styles.dropdownAvatar}></span>
                   <span className={styles.dropdownName}>Admin</span>
                 </div>
                 <button className={styles.dropdownItem} onClick={() => router.push('/')}>
-                  🏠 หน้าหลัก
+                   หน้าหลัก
                 </button>
                 <button className={styles.dropdownItem}>
-                  ⚙️ ตั้งค่า
+                   ตั้งค่า
                 </button>
                 <button className={`${styles.dropdownItem} ${styles.logout}`}>
-                  🚪 ออกจากระบบ
+                   ออกจากระบบ
                 </button>
               </div>
             )}
@@ -173,15 +173,14 @@ export default function AdminPage() {
           {/* Header */}
           <div className={styles.adminHeader}>
             <h1 className={styles.adminTitle}>ระบบจัดการคำสั่งซื้อ</h1>
-            <p className={styles.adminSubtitle}>จัดการคำสั่งซื้อเสื้อเฉลิมฉลอง 243 ปี</p>
           </div>
 
           {/* Tabs */}
           <div className={styles.tabsContainer}>
-            <button className={`${styles.tab} ${activeTab === 'dashboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('dashboard')}>📊 Dashboard</button>
-            <button className={`${styles.tab} ${activeTab === 'orders' ? styles.tabActive : ''}`} onClick={() => setActiveTab('orders')}>📦 คำสั่งซื้อ</button>
-            <button className={`${styles.tab} ${activeTab === 'products' ? styles.tabActive : ''}`} onClick={() => setActiveTab('products')}>👕 สินค้า</button>
-            <button className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`} onClick={() => setActiveTab('settings')}>⚙️ ตั้งค่า</button>
+            <button className={`${styles.tab} ${activeTab === 'dashboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('dashboard')}> Dashboard</button>
+            <button className={`${styles.tab} ${activeTab === 'orders' ? styles.tabActive : ''}`} onClick={() => setActiveTab('orders')}> คำสั่งซื้อ</button>
+            <button className={`${styles.tab} ${activeTab === 'products' ? styles.tabActive : ''}`} onClick={() => setActiveTab('products')}> สินค้า</button>
+            <button className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`} onClick={() => setActiveTab('settings')}> ตั้งค่า</button>
           </div>
 
           {/* Dashboard */}
@@ -192,7 +191,7 @@ export default function AdminPage() {
               <div className={styles.statsGrid}>
 
                 <div className={`${styles.statCard} ${styles.statPrimary}`}>
-                  <div className={styles.statIcon}>📦</div>
+                  <div className={styles.statIcon}></div>
                   <div>
                     <div className={styles.statValue}>{statistics.totalOrders.toLocaleString()}</div>
                     <div className={styles.statLabel}>คำสั่งซื้อทั้งหมด</div>
@@ -200,7 +199,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className={`${styles.statCard} ${styles.statWarning}`}>
-                  <div className={styles.statIcon}>⏳</div>
+                  <div className={styles.statIcon}></div>
                   <div>
                     <div className={styles.statValue}>{statistics.pendingOrders.toLocaleString()}</div>
                     <div className={styles.statLabel}>รอดำเนินการ</div>
@@ -208,7 +207,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className={`${styles.statCard} ${styles.statSuccess}`}>
-                  <div className={styles.statIcon}>💰</div>
+                  <div className={styles.statIcon}></div>
                   <div>
                     <div className={styles.statValue}>฿{statistics.totalRevenue.toLocaleString()}</div>
                     <div className={styles.statLabel}>รายได้รวม</div>
@@ -216,7 +215,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className={`${styles.statCard} ${styles.statInfoBox}`}>
-                  <div className={styles.statIcon}>👕</div>
+                  <div className={styles.statIcon}></div>
                   <div>
                     <div className={styles.statValue}>{statistics.totalShirts.toLocaleString()}</div>
                     <div className={styles.statLabel}>เสื้อที่ขายได้</div>
@@ -260,7 +259,7 @@ export default function AdminPage() {
               <div className={styles.filtersBar}>
                 <input
                   type="text"
-                  placeholder="🔍 ค้นหาหมายเลขคำสั่งซื้อ หรือชื่อลูกค้า..."
+                  placeholder=" ค้นหาหมายเลขคำสั่งซื้อ หรือชื่อลูกค้า..."
                   className={styles.searchInput}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -317,9 +316,9 @@ export default function AdminPage() {
 
                         <td>
                           <div className={styles.actionButtons}>
-                            <button className={styles.btnView}>👁️</button>
-                            <button className={styles.btnEdit}>✏️</button>
-                            <button className={styles.btnDelete}>🗑️</button>
+                            <button className={styles.btnView}></button>
+                            <button className={styles.btnEdit}></button>
+                            <button className={styles.btnDelete}></button>
                           </div>
                         </td>
                       </tr>
@@ -336,7 +335,7 @@ export default function AdminPage() {
           {activeTab === 'products' && (
             <div className={styles.productsContent}>
               <div className={styles.comingSoon}>
-                <div className={styles.comingSoonIcon}>👕</div>
+                <div className={styles.comingSoonIcon}></div>
                 <h2>กำลังพัฒนา</h2>
                 <p>ฟีเจอร์จัดการสินค้ากำลังอยู่ระหว่างการพัฒนา</p>
               </div>
@@ -347,7 +346,7 @@ export default function AdminPage() {
           {activeTab === 'settings' && (
             <div className={styles.settingsContent}>
               <div className={styles.comingSoon}>
-                <div className={styles.comingSoonIcon}>⚙️</div>
+                <div className={styles.comingSoonIcon}></div>
                 <h2>กำลังพัฒนา</h2>
                 <p>ฟีเจอร์ตั้งค่ากำลังอยู่ระหว่างการพัฒนา</p>
               </div>

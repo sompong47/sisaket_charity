@@ -272,16 +272,17 @@ body {
   margin-top: 20px;
   padding: 12px;
   border-radius: 10px;
-  background: hwb(0 0% 100%);
-  color: #fff;
+  background: #ffffff;
+  color: #9ca3af;
   font-size: 16px;
-  border: none;
+  border: 1px solid #d4d7ff;  /* เพิ่มกรอบสีเทาอ่อน */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
 }
+
 
 .google-icon {
   width: 24px;
@@ -321,7 +322,7 @@ body {
 
 .login-btn {
   width: 100%;
-  background: #000000;
+  background: #667eea;
   color: #fff;
   padding: 12px;
   border: none;

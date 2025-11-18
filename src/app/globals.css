@@ -574,6 +574,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  position: relative;
 }
 
 .type-btn:hover {
@@ -583,18 +584,64 @@ body {
 }
 
 .type-btn.active {
-  background: linear-gradient(135deg, rgba(120, 144, 156, 0.3), rgba(96, 125, 139, 0.3));
-  border-color: rgba(120, 144, 156, 0.5);
-  box-shadow: 0 10px 40px rgba(120, 144, 156, 0.4);
+  background: linear-gradient(135deg, rgba(120, 144, 156, 0.5), rgba(96, 125, 139, 0.5));
+  border: 4px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 15px 50px rgba(120, 144, 156, 0.7),
+              0 0 0 4px rgba(120, 144, 156, 0.3);
+  transform: translateY(-5px) scale(1.03);
+}
+
+.type-btn.active::before {
+  content: "✓";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 900;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
+  animation: checkPop 0.3s ease;
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 .type-icon {
   font-size: 3rem;
+  transition: transform 0.3s ease;
+}
+
+.type-btn.active .type-icon {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
 }
 
 .type-name {
   font-size: 1.25rem;
   font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.type-btn.active .type-name {
+  font-size: 1.4rem;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
 }
 
 .type-count {
