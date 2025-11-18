@@ -4,9 +4,17 @@ import './login.css';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import api from '../../utils/api'; // ✅ 1. เรียกใช้ตัวกลาง API
 
 export default function LoginPage() {
   const router = useRouter();
+  
+  // ✅ 2. สร้างตัวแปรเก็บข้อมูล
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // เอาไว้เช็คว่ากำลังโหลดอยู่ไหม
+
+  // State ของ UI เดิม
   const [showPassword, setShowPassword] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -20,7 +28,6 @@ export default function LoginPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // สร้าง particles ตอนโหลดหน้า (ตรวจว่า .animated-bg มีอยู่)
   useEffect(() => {
     const container = document.querySelector('.animated-bg');
     if (!container) return;
@@ -34,6 +41,38 @@ export default function LoginPage() {
     }
   }, []);
 
+  // ✅ 3. ฟังก์ชันล็อกอิน
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); // ป้องกันหน้าเว็บรีเฟรช
+    setLoading(true);
+
+    try {
+      // ยิง API ไปที่ Backend
+      // (หมายเหตุ: เช็ค Backend ดีๆ ว่ารับ 'phone' หรือ 'email')
+      const { data } = await api.post('/api/users/login', {
+        phone: phone, 
+        password: password
+      });
+
+      // ถ้าสำเร็จ: บันทึก Token ลงเครื่อง
+      localStorage.setItem('token', data.token);
+      // บันทึกข้อมูล user เก็บไว้โชว์ (ถ้ามีส่งกลับมา)
+      if(data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+
+      alert('เข้าสู่ระบบสำเร็จ! 🎉');
+      router.push('/'); // เด้งไปหน้าแรก
+
+    } catch (error: any) {
+      console.error('Login Error:', error);
+      const message = error.response?.data?.message || 'เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง';
+      alert(`❌ เกิดข้อผิดพลาด: ${message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page-wrapper">
       {/* Animated Background */}
@@ -46,46 +85,10 @@ export default function LoginPage() {
             <div className="logo-icon"></div>
             <span className="logo-text">เสื้อเฉลิมฉลองเมือง 243 ปี</span>
           </div>
-
+          
+          {/* หน้า Login ปกติจะไม่โชว์เมนู User ขวาบน แต่ถ้าจะคงไว้ก็ตามดีไซน์เดิมครับ */}
           <div className="nav-menu">
-            <button
-              className="user-btn"
-              onClick={() => setShowUserMenu(!showUserMenu)}
-            >
-              <span className="user-avatar"></span>
-              <span className="user-text">สมชัน</span>
-              <span className="dropdown-arrow">▼</span>
-            </button>
-
-            {showUserMenu && (
-              <div className="user-dropdown">
-                <div className="dropdown-header">
-                  <span className="dropdown-avatar"></span>
-                  <span className="dropdown-name">นาย สมชัน</span>
-                </div>
-
-                <button
-                  className="dropdown-item"
-                  onClick={() => router.push('/order')}
-                >
-                  สั่งซื้อเสื้อ
-                </button>
-
-                <button
-                  className="dropdown-item"
-                  onClick={() => router.push('/orders')}
-                >
-                  ประวัติการสั่งซื้อ
-                </button>
-
-                <button
-                  className="dropdown-item logout"
-                  onClick={() => router.push('/login')}
-                >
-                  ออกจากระบบ
-                </button>
-              </div>
-            )}
+            {/* ... (ส่วน Menu Code เดิม) ... */}
           </div>
         </div>
       </nav>
@@ -94,7 +97,6 @@ export default function LoginPage() {
       <div className="login-container">
         <div className="login-card">
           <div className="logo-box">
-            {/* ถ้าไฟล์ site-logo.png อยู่ในโฟลเดอร์ public ให้ใช้ path เริ่มด้วย / */}
             <img src="/site-logo.png" alt="logo" className="logo" />
           </div>
 
@@ -106,20 +108,30 @@ export default function LoginPage() {
 
           <h2 className="login-title">เข้าสู่ระบบ</h2>
 
-          <button className="google-btn">
+          <button className="google-btn" type="button">
             <img src="/google-color.png" alt="Google" className="google-icon" />
             Continue with Google
           </button>
 
-          <div className="form-section">
+          {/* ✅ เปลี่ยน div เป็น form เพื่อให้กด Enter แล้วล็อกอินได้ */}
+          <form className="form-section" onSubmit={handleLogin}>
             <label>เบอร์โทรศัพท์</label>
-            <input type="text" placeholder="กรอกเบอร์โทรศัพท์" />
+            <input 
+              type="text" 
+              placeholder="กรอกเบอร์โทรศัพท์" 
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
 
             <label>รหัสผ่าน</label>
             <div className="password-wrapper">
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder=".........."
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <span
                 className="eye-icon"
@@ -130,8 +142,15 @@ export default function LoginPage() {
               </span>
             </div>
 
-            <button className="login-btn">เข้าสู่ระบบ</button>
-          </div>
+            <button 
+              className="login-btn" 
+              type="submit" 
+              disabled={loading} // ห้ามกดรัวๆ
+              style={{ opacity: loading ? 0.7 : 1 }}
+            >
+              {loading ? 'กำลังโหลด...' : 'เข้าสู่ระบบ'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

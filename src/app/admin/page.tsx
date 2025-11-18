@@ -2,164 +2,228 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import api from '@/utils/api';
 import styles from './adminpage.module.css';
 
 // ==================== INTERFACES ====================
-type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'completed' | 'cancelled';
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  phone: string;
-  shirtType: string;
-  totalQuantity: number;
-  grandTotal: number;
-  status: OrderStatus;
-  orderDate: string;
+interface OrderItem {
+  productName: string;
+  size: string;
+  quantity: number;
+  price: number;
 }
 
-interface Statistics {
-  totalOrders: number;
-  pendingOrders: number;
-  totalRevenue: number;
-  totalShirts: number;
+interface Order {
+  _id: string;
+  orderNumber: string;
+  customer: {
+    name: string;
+    phone: string;
+    address?: string;
+  };
+  items: OrderItem[];
+  totalAmount: number;
+  status: string;
+  payment?: {
+    slipUrl?: string;
+    isPaid?: boolean;
+    paidAt?: string;
+  };
+  createdAt: string;
+}
+
+// ✅ Interface สำหรับสินค้า
+interface Product {
+  _id: string;
+  productCode: string;
+  name: string;
+  description: string; // เพิ่มตรงนี้
+  price: number;
+  images: { url: string }[];
+  sizes: { size: string; stock: number }[];
+  isActive: boolean;
 }
 
 export default function AdminPage() {
   const router = useRouter();
+  
+  // State UI
   const [scrolled, setScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'products' | 'settings'>('dashboard');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [currentUser, setCurrentUser] = useState({ name: 'ผู้ดูแลระบบ' });
+  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const [statistics] = useState<Statistics>({
-    totalOrders: 1899,
-    pendingOrders: 243,
-    totalRevenue: 375804,
-    totalShirts: 31619
+  // State Data
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // State Modal
+  const [showSlipModal, setShowSlipModal] = useState(false);
+  const [selectedSlip, setSelectedSlip] = useState('');
+  
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editProductId, setEditProductId] = useState('');
+  const [productForm, setProductForm] = useState({
+    productCode: '', 
+    name: '', 
+    description: '', // ✅ ต้องมีค่าเริ่มต้น
+    price: 0,
+    image: '', 
+    stockS: 0, stockM: 0, stockL: 0, stockXL: 0, stock2XL: 0
   });
 
-  const [orders] = useState<Order[]>([
-    {
-      id: '1',
-      orderNumber: 'ORD20241117001',
-      customerName: 'สมชัย ใจดี',
-      phone: '098-456-7897',
-      shirtType: 'เสื้อสีปกติ',
-      totalQuantity: 3,
-      grandTotal: 664,
-      status: 'pending',
-      orderDate: '2024-11-17 10:30'
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD20241117002',
-      customerName: 'สมหญิง รักดี',
-      phone: '089-123-4567',
-      shirtType: 'เสื้อไว้ทุกข์',
-      totalQuantity: 5,
-      grandTotal: 1030,
-      status: 'confirmed',
-      orderDate: '2024-11-17 11:45'
-    },
-    {
-      id: '3',
-      orderNumber: 'ORD20241117003',
-      customerName: 'วิชัย มีสุข',
-      phone: '092-555-6789',
-      shirtType: 'เสื้อสีปกติ',
-      totalQuantity: 2,
-      grandTotal: 446,
-      status: 'shipped',
-      orderDate: '2024-11-17 14:20'
+  // ================= LOAD DATA =================
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const ordersRes = await api.get('/api/orders');
+      setOrders(ordersRes.data.data || []);
+
+      const productsRes = await api.get('/api/products/admin/all');
+      setProducts(productsRes.data.data || []);
+
+    } catch (error: any) {
+      console.error("Fetch error", error);
+      if (error.response?.status === 401) router.push('/login');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    fetchData();
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const bg = document.querySelector(`.${styles.animatedBg}`);
-    if (bg && bg.children.length === 0) {
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = styles.particle;
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-        bg.appendChild(particle);
-      }
-    }
-  }, []);
+  // ================= PRODUCT LOGIC =================
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productForm.description.trim()) return alert('กรุณากรอกรายละเอียดสินค้า'); // เช็คก่อนส่ง
+    if (!confirm(isEditing ? 'บันทึกการแก้ไข?' : 'ยืนยันเพิ่มสินค้า?')) return;
 
-  // ----------------- FIX TYPE ERROR (STRICT) -----------------
-  const getStatusBadge = (status: OrderStatus) => {
-    const statusMap: Record<OrderStatus, { label: string; class: string }> = {
-      pending: { label: 'รอดำเนินการ', class: styles.statusPending },
-      confirmed: { label: 'ยืนยันแล้ว', class: styles.statusConfirmed },
-      shipped: { label: 'จัดส่งแล้ว', class: styles.statusShipped },
-      completed: { label: 'สำเร็จ', class: styles.statusCompleted },
-      cancelled: { label: 'ยกเลิก', class: styles.statusCancelled }
+    const payload = {
+      productCode: productForm.productCode,
+      name: productForm.name,
+      description: productForm.description, // ✅ ส่งค่านี้ไปด้วย
+      price: Number(productForm.price),
+      images: [{ url: productForm.image, isPrimary: true }],
+      sizes: [
+        { size: 'S', stock: Number(productForm.stockS) },
+        { size: 'M', stock: Number(productForm.stockM) },
+        { size: 'L', stock: Number(productForm.stockL) },
+        { size: 'XL', stock: Number(productForm.stockXL) },
+        { size: '2XL', stock: Number(productForm.stock2XL) },
+      ],
+      isActive: true
     };
 
-    return statusMap[status];
+    try {
+      if (isEditing) {
+        await api.put(`/api/products/${editProductId}`, payload);
+      } else {
+        await api.post('/api/products', payload);
+      }
+      alert('✅ บันทึกข้อมูลสำเร็จ');
+      setShowProductModal(false);
+      fetchData(); 
+    } catch (error: any) {
+      alert('❌ เกิดข้อผิดพลาด: ' + (error.response?.data?.message || error.message));
+    }
   };
 
-  // Filter orders
-  const filteredOrders = orders.filter(order => {
-    const matchSearch =
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm('⚠️ ลบสินค้านี้?')) return;
+    try {
+      await api.delete(`/api/products/${id}`);
+      alert('ลบสินค้าเรียบร้อย');
+      fetchData();
+    } catch (error) {
+      alert('ลบไม่สำเร็จ');
+    }
+  };
 
-    const matchStatus = filterStatus === 'all' || order.status === filterStatus;
+  const openEditProduct = (p: Product) => {
+    setIsEditing(true);
+    setEditProductId(p._id);
+    setProductForm({
+      productCode: p.productCode,
+      name: p.name,
+      description: p.description || '', // ✅ ดึงข้อมูลเดิมมาใส่
+      price: p.price,
+      image: p.images[0]?.url || '',
+      stockS: p.sizes.find(s => s.size === 'S')?.stock || 0,
+      stockM: p.sizes.find(s => s.size === 'M')?.stock || 0,
+      stockL: p.sizes.find(s => s.size === 'L')?.stock || 0,
+      stockXL: p.sizes.find(s => s.size === 'XL')?.stock || 0,
+      stock2XL: p.sizes.find(s => s.size === '2XL')?.stock || 0, // แก้ไซซ์ให้ตรง (2XL ไม่ใช่ 2xl)
+    });
+    setShowProductModal(true);
+  };
 
-    return matchSearch && matchStatus;
-  });
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) return alert('ไฟล์ใหญ่เกิน 5MB'); // กันไฟล์ใหญ่เกิน
+      const reader = new FileReader();
+      reader.onloadend = () => setProductForm(prev => ({ ...prev, image: reader.result as string }));
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // ================= ORDER LOGIC =================
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    if (!confirm('เปลี่ยนสถานะ?')) return;
+    await api.put(`/api/orders/${id}`, { status: newStatus });
+    fetchData();
+  };
+
+  const handleDeleteOrder = async (id: string) => {
+    if (!confirm('ลบออเดอร์นี้?')) return;
+    await api.delete(`/api/orders/${id}`);
+    fetchData();
+  };
+
+  const getStatusBadge = (status: string) => {
+    const map: any = { pending: '#ffc107', paid: '#28a745', shipped: '#007bff', cancelled: '#dc3545' };
+    return { bg: map[status] || '#6c757d', text: status.toUpperCase() };
+  };
+
+  // Statistics
+  const stats = {
+    orders: orders.length,
+    revenue: orders.reduce((sum, o) => sum + o.totalAmount, 0),
+    pending: orders.filter(o => o.status === 'pending').length,
+    products: products.length
+  };
+
+  if (loading) return <div className={styles.loading}>กำลังโหลดข้อมูล...</div>;
 
   return (
     <div className={styles.page}>
-      {/* Animated Background */}
       <div className={styles.animatedBg}></div>
 
       {/* Navigation */}
       <nav className={`${styles.topNavigation} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.navContainer}>
-          <div className={styles.navLogo}>
-            <span className={styles.logoText}> Admin Dashboard</span>
-          </div>
+          <div className={styles.navLogo}><span className={styles.logoText}> Admin Dashboard</span></div>
           <div className={styles.navMenu}>
-            <button
-              className={styles.userBtn}
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
+            <button className={styles.userBtn} onClick={() => setShowDropdown(!showDropdown)}>
               <span className={styles.userAvatar}></span>
-              <span className={styles.userText}>ผู้ดูแลระบบ</span>
-              <span className={styles.dropdownArrow}>▼</span>
+              <span className={styles.userText}>{currentUser.name}</span>
             </button>
-
             {showDropdown && (
               <div className={styles.userDropdown}>
-                <div className={styles.dropdownHeader}>
-                  <span className={styles.dropdownAvatar}></span>
-                  <span className={styles.dropdownName}>Admin</span>
-                </div>
-                <button className={styles.dropdownItem} onClick={() => router.push('/')}>
-                   หน้าหลัก
-                </button>
-                <button className={styles.dropdownItem}>
-                   ตั้งค่า
-                </button>
-                <button className={`${styles.dropdownItem} ${styles.logout}`}>
-                   ออกจากระบบ
-                </button>
+                <button className={styles.dropdownItem} onClick={() => router.push('/')}>หน้าหลัก</button>
+                <button className={`${styles.dropdownItem} ${styles.logout}`} onClick={() => {
+                   localStorage.clear(); router.push('/login');
+                }}>ออกจากระบบ</button>
               </div>
             )}
           </div>
@@ -169,192 +233,161 @@ export default function AdminPage() {
       {/* Main Content */}
       <div className={styles.adminContent}>
         <div className={styles.adminContainer}>
+          <div className={styles.adminHeader}><h1 className={styles.adminTitle}>ระบบจัดการร้านค้า</h1></div>
 
-          {/* Header */}
-          <div className={styles.adminHeader}>
-            <h1 className={styles.adminTitle}>ระบบจัดการคำสั่งซื้อ</h1>
-          </div>
-
-          {/* Tabs */}
           <div className={styles.tabsContainer}>
-            <button className={`${styles.tab} ${activeTab === 'dashboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('dashboard')}> Dashboard</button>
-            <button className={`${styles.tab} ${activeTab === 'orders' ? styles.tabActive : ''}`} onClick={() => setActiveTab('orders')}> คำสั่งซื้อ</button>
-            <button className={`${styles.tab} ${activeTab === 'products' ? styles.tabActive : ''}`} onClick={() => setActiveTab('products')}> สินค้า</button>
-            <button className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`} onClick={() => setActiveTab('settings')}> ตั้งค่า</button>
+            <button className={`${styles.tab} ${activeTab === 'dashboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('dashboard')}>Dashboard</button>
+            <button className={`${styles.tab} ${activeTab === 'orders' ? styles.tabActive : ''}`} onClick={() => setActiveTab('orders')}>คำสั่งซื้อ</button>
+            <button className={`${styles.tab} ${activeTab === 'products' ? styles.tabActive : ''}`} onClick={() => setActiveTab('products')}>สินค้า</button>
           </div>
 
-          {/* Dashboard */}
+          {/* 🟢 TAB: DASHBOARD */}
           {activeTab === 'dashboard' && (
             <div className={styles.dashboardContent}>
-              
-              {/* Statistics Cards */}
               <div className={styles.statsGrid}>
-
-                <div className={`${styles.statCard} ${styles.statPrimary}`}>
-                  <div className={styles.statIcon}></div>
-                  <div>
-                    <div className={styles.statValue}>{statistics.totalOrders.toLocaleString()}</div>
-                    <div className={styles.statLabel}>คำสั่งซื้อทั้งหมด</div>
-                  </div>
-                </div>
-
-                <div className={`${styles.statCard} ${styles.statWarning}`}>
-                  <div className={styles.statIcon}></div>
-                  <div>
-                    <div className={styles.statValue}>{statistics.pendingOrders.toLocaleString()}</div>
-                    <div className={styles.statLabel}>รอดำเนินการ</div>
-                  </div>
-                </div>
-
-                <div className={`${styles.statCard} ${styles.statSuccess}`}>
-                  <div className={styles.statIcon}></div>
-                  <div>
-                    <div className={styles.statValue}>฿{statistics.totalRevenue.toLocaleString()}</div>
-                    <div className={styles.statLabel}>รายได้รวม</div>
-                  </div>
-                </div>
-
-                <div className={`${styles.statCard} ${styles.statInfoBox}`}>
-                  <div className={styles.statIcon}></div>
-                  <div>
-                    <div className={styles.statValue}>{statistics.totalShirts.toLocaleString()}</div>
-                    <div className={styles.statLabel}>เสื้อที่ขายได้</div>
-                  </div>
-                </div>
-
+                <div className={`${styles.statCard} ${styles.statPrimary}`}><div><div className={styles.statValue}>{stats.orders}</div><div className={styles.statLabel}>คำสั่งซื้อทั้งหมด</div></div></div>
+                <div className={`${styles.statCard} ${styles.statWarning}`}><div><div className={styles.statValue}>{stats.pending}</div><div className={styles.statLabel}>รอตรวจสอบ</div></div></div>
+                <div className={`${styles.statCard} ${styles.statSuccess}`}><div><div className={styles.statValue}>฿{stats.revenue.toLocaleString()}</div><div className={styles.statLabel}>รายได้รวม</div></div></div>
+                <div className={`${styles.statCard} ${styles.statInfoBox}`}><div><div className={styles.statValue}>{stats.products}</div><div className={styles.statLabel}>สินค้าในระบบ</div></div></div>
               </div>
-
-              {/* Recent Orders */}
-              <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>คำสั่งซื้อล่าสุด</h2>
-                <div className={styles.ordersList}>
-                  {orders.slice(0, 5).map(order => (
-                    <div key={order.id} className={styles.orderItem}>
-                      <div className={styles.orderInfo}>
-                        <div className={styles.orderNumber}>{order.orderNumber}</div>
-                        <div className={styles.orderCustomer}>{order.customerName}</div>
-                      </div>
-
-                      <div className={styles.orderDetails}>
-                        <div className={styles.orderQuantity}>{order.totalQuantity} ตัว</div>
-                        <div className={styles.orderPrice}>฿{order.grandTotal.toLocaleString()}</div>
-                      </div>
-
-                      <span className={`${styles.statusBadge} ${getStatusBadge(order.status).class}`}>
-                        {getStatusBadge(order.status).label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
             </div>
           )}
 
-          {/* Orders */}
+          {/* 🟡 TAB: ORDERS */}
           {activeTab === 'orders' && (
             <div className={styles.ordersContent}>
-
-              {/* Filters */}
-              <div className={styles.filtersBar}>
-                <input
-                  type="text"
-                  placeholder=" ค้นหาหมายเลขคำสั่งซื้อ หรือชื่อลูกค้า..."
-                  className={styles.searchInput}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-
-                <select
-                  className={styles.filterSelect}
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="all">สถานะทั้งหมด</option>
-                  <option value="pending">รอดำเนินการ</option>
-                  <option value="confirmed">ยืนยันแล้ว</option>
-                  <option value="shipped">จัดส่งแล้ว</option>
-                  <option value="completed">สำเร็จ</option>
-                  <option value="cancelled">ยกเลิก</option>
-                </select>
-              </div>
-
-              {/* Orders Table */}
               <div className={styles.tableContainer}>
                 <table className={styles.ordersTable}>
-                  <thead>
-                    <tr>
-                      <th>หมายเลขคำสั่งซื้อ</th>
-                      <th>ลูกค้า</th>
-                      <th>เบอร์โทร</th>
-                      <th>ประเภทเสื้อ</th>
-                      <th>จำนวน</th>
-                      <th>ราคารวม</th>
-                      <th>สถานะ</th>
-                      <th>วันที่สั่งซื้อ</th>
-                      <th>การจัดการ</th>
-                    </tr>
-                  </thead>
-
+                  <thead><tr><th>Order ID</th><th>ลูกค้า</th><th>สลิป</th><th>ยอดรวม</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                   <tbody>
-                    {filteredOrders.map(order => (
-                      <tr key={order.id}>
-                        <td className={styles.orderNumberCell}>{order.orderNumber}</td>
-                        <td>{order.customerName}</td>
-                        <td>{order.phone}</td>
-                        <td>{order.shirtType}</td>
-                        <td>{order.totalQuantity} ตัว</td>
-                        <td className={styles.priceCell}>฿{order.grandTotal.toLocaleString()}</td>
-
+                    {orders.map(order => (
+                      <tr key={order._id}>
+                        <td>#{order.orderNumber}</td>
+                        <td>{order.customer.name}<br/>{order.customer.phone}</td>
                         <td>
-                          <span className={`${styles.statusBadge} ${getStatusBadge(order.status).class}`}>
-                            {getStatusBadge(order.status).label}
-                          </span>
+                           {order.payment?.slipUrl ? (
+                             <button onClick={() => { setSelectedSlip(order.payment!.slipUrl!); setShowSlipModal(true); }} style={{cursor:'pointer'}}>📄 ดูรูป</button>
+                           ) : '-'}
                         </td>
-
-                        <td>{order.orderDate}</td>
-
+                        <td>฿{order.totalAmount.toLocaleString()}</td>
                         <td>
-                          <div className={styles.actionButtons}>
-                            <button className={styles.btnView}></button>
-                            <button className={styles.btnEdit}></button>
-                            <button className={styles.btnDelete}></button>
-                          </div>
+                           <span style={{background: getStatusBadge(order.status).bg, padding: '2px 8px', borderRadius: '10px', color: 'white', fontSize: '12px'}}>
+                             {getStatusBadge(order.status).text}
+                           </span>
+                        </td>
+                        <td>
+                           <select value={order.status} onChange={(e) => handleStatusUpdate(order._id, e.target.value)} style={{marginRight: 5}}>
+                             <option value="pending">รอชำระ</option><option value="paid">ชำระแล้ว</option><option value="shipped">ส่งแล้ว</option><option value="cancelled">ยกเลิก</option>
+                           </select>
+                           <button onClick={() => handleDeleteOrder(order._id)}>🗑️</button>
                         </td>
                       </tr>
                     ))}
+                    {orders.length === 0 && <tr><td colSpan={6} style={{textAlign:'center', padding: 20}}>ไม่มีคำสั่งซื้อ</td></tr>}
                   </tbody>
-
                 </table>
               </div>
-
             </div>
           )}
 
-          {/* Products */}
+          {/* 🔴 TAB: PRODUCTS */}
           {activeTab === 'products' && (
             <div className={styles.productsContent}>
-              <div className={styles.comingSoon}>
-                <div className={styles.comingSoonIcon}></div>
-                <h2>กำลังพัฒนา</h2>
-                <p>ฟีเจอร์จัดการสินค้ากำลังอยู่ระหว่างการพัฒนา</p>
+              <div style={{textAlign:'right', marginBottom:'20px'}}>
+                <button className={styles.btnPrimary} onClick={() => {
+                   setIsEditing(false); 
+                   // Reset Form
+                   setProductForm({productCode:'', name:'', description:'', price:0, image:'', stockS:0, stockM:0, stockL:0, stockXL:0, stock2XL:0});
+                   setShowProductModal(true);
+                }}>+ เพิ่มสินค้าใหม่</button>
+              </div>
+
+              <div className={styles.tableContainer}>
+                <table className={styles.ordersTable}>
+                  <thead><tr><th>รูป</th><th>รหัส</th><th>ชื่อสินค้า</th><th>ราคา</th><th>สต็อกรวม</th><th>จัดการ</th></tr></thead>
+                  <tbody>
+                    {products.map(p => {
+                      const totalStock = p.sizes.reduce((sum, s) => sum + s.stock, 0);
+                      return (
+                        <tr key={p._id}>
+                          <td><img src={p.images[0]?.url} alt={p.name} style={{width:'50px', height:'50px', objectFit:'cover', borderRadius:'5px'}}/></td>
+                          <td>{p.productCode}</td>
+                          <td>{p.name}</td>
+                          <td className={styles.priceCell}>฿{p.price.toLocaleString()}</td>
+                          <td>{totalStock} ตัว</td>
+                          <td>
+                            <button onClick={() => openEditProduct(p)} style={{marginRight:'10px'}}>✏️</button>
+                            <button onClick={() => handleDeleteProduct(p._id)}>🗑️</button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
-
-          {/* Settings */}
-          {activeTab === 'settings' && (
-            <div className={styles.settingsContent}>
-              <div className={styles.comingSoon}>
-                <div className={styles.comingSoonIcon}></div>
-                <h2>กำลังพัฒนา</h2>
-                <p>ฟีเจอร์ตั้งค่ากำลังอยู่ระหว่างการพัฒนา</p>
-              </div>
-            </div>
-          )}
-
         </div>
       </div>
+
+      {/* MODAL: VIEW SLIP */}
+      {showSlipModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowSlipModal(false)}>
+           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+             <img src={selectedSlip} style={{maxWidth:'100%', maxHeight:'80vh'}} />
+           </div>
+        </div>
+      )}
+
+      {/* MODAL: MANAGE PRODUCT */}
+      {showProductModal && (
+        <div className={styles.modalOverlay}>
+           <div className={styles.modalContent} style={{maxWidth:'600px', textAlign:'left'}}>
+             <h2>{isEditing ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h2>
+             <form onSubmit={handleProductSubmit} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+                <input type="text" placeholder="รหัสสินค้า (เช่น T001)" value={productForm.productCode} onChange={e => setProductForm({...productForm, productCode: e.target.value})} required disabled={isEditing} />
+                <input type="text" placeholder="ชื่อสินค้า" value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})} required />
+                
+                {/* ✅✅✅ เพิ่มช่องนี้ครับ (แก้ปัญหา Error) ✅✅✅ */}
+                <textarea 
+                   placeholder="รายละเอียดสินค้า (เช่น เนื้อผ้าดี ใส่สบาย)" 
+                   value={productForm.description} 
+                   onChange={e => setProductForm({...productForm, description: e.target.value})} 
+                   required 
+                   rows={3}
+                   style={{padding: '10px', borderRadius: '5px', border: '1px solid #ddd'}}
+                />
+
+                <input type="number" placeholder="ราคา (บาท)" value={productForm.price} onChange={e => setProductForm({...productForm, price: Number(e.target.value)})} required />
+                
+                <label>รูปสินค้า:</label>
+                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                {productForm.image && <img src={productForm.image} style={{height:'100px', objectFit:'contain'}} />}
+
+                <label>สต็อกสินค้า (จำนวน):</label>
+                <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:'5px'}}>
+                  {['S','M','L','XL','2XL'].map(size => (
+                    <div key={size}>
+                      <span style={{fontSize:'12px'}}>{size}</span>
+                      <input type="number" placeholder="0" value={(productForm as any)[`stock${size}`]} onChange={e => setProductForm({...productForm, [`stock${size}`]: e.target.value})} style={{width:'100%'}} />
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{display:'flex', gap:'10px', marginTop:'20px'}}>
+                  <button type="submit" className={styles.btnPrimary} style={{flex:1}}>บันทึก</button>
+                  <button type="button" onClick={() => setShowProductModal(false)} style={{flex:1, background:'#ccc', border:'none', borderRadius:'10px', cursor:'pointer'}}>ยกเลิก</button>
+                </div>
+             </form>
+           </div>
+        </div>
+      )}
+
+      {/* CSS for Modal */}
+      <style jsx>{`
+        .modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .modalContent { background: white; padding: 20px; border-radius: 10px; width: 90%; max-height: 90vh; overflow-y: auto; }
+      `}</style>
     </div>
   );
 }

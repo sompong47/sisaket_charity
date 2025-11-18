@@ -1,508 +1,219 @@
-"use client";
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import api from '../../utils/api';
+import Link from 'next/link';
 
 export default function OrdersPage() {
   const router = useRouter();
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  // State สำหรับ Modal แจ้งชำระเงิน
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState('');
+  const [slipFile, setSlipFile] = useState<string | null>(null); // เก็บรูป Base64
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const userData = localStorage.getItem('user');
+        if (!token) { router.push('/login'); return; }
+        if (userData) setUser(JSON.parse(userData));
+
+        const { data } = await api.get('/api/orders/my-orders');
+        setOrders(data.data || []);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    fetchOrders();
   }, []);
 
-  // สร้าง particles ตอนโหลดหน้า
-  useEffect(() => {
-    const container = document.querySelector('.animated-bg');
-    if (!container) return;
-    for (let i = 0; i < 55; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.top = Math.random() * 100 + 'vh';
-      p.style.animationDelay = Math.random() * 12 + 's';
-      container.appendChild(p);
+  // Helper: แปลงไฟล์รูปเป็น Base64 Code
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // เช็คขนาดไฟล์ (อย่าเกิน 5MB เดี๋ยว Database เต็ม)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('❌ รูปภาพต้องมีขนาดไม่เกิน 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSlipFile(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }, []);
+  };
+
+  // ฟังก์ชันส่งข้อมูลชำระเงิน
+  const handleSubmitPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!slipFile) return alert('กรุณาแนบรูปสลิป');
+
+    setUploading(true);
+    try {
+      await api.put(`/api/orders/${selectedOrderId}/pay`, {
+        slipImage: slipFile,
+        paymentDate: new Date().toISOString().split('T')[0], // วันที่ปัจจุบัน
+        paymentTime: new Date().toTimeString().split(' ')[0] // เวลาปัจจุบัน
+      });
+
+      alert('✅ แจ้งชำระเงินเรียบร้อย!');
+      setShowModal(false);
+      setSlipFile(null);
+      // รีโหลดหน้าเพื่ออัปเดตสถานะ
+      window.location.reload();
+    } catch (error: any) {
+      alert('เกิดข้อผิดพลาด: ' + error.response?.data?.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getStatusBadge = (status: string, hasSlip: boolean) => {
+    if (status === 'pending' && hasSlip) return { bg: '#17a2b8', text: 'รอตรวจสอบ' };
+    switch(status) {
+        case 'paid': return { bg: '#28a745', text: 'ชำระเงินแล้ว' };
+        case 'shipped': return { bg: '#007bff', text: 'จัดส่งแล้ว' };
+        default: return { bg: '#ffc107', text: 'รอชำระเงิน' };
+    }
+  };
 
   return (
-    <>
+    <div className="orders-page-wrapper">
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap");
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+        .orders-page-wrapper { min-height: 100vh; background: #f4f6f9; padding: 80px 20px; font-family: 'Prompt', sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .page-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
+        
+        .order-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid #007bff; }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; color: #666; font-size: 0.9rem; }
+        .order-items { margin-bottom: 15px; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: #333; }
+        
+        .order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; }
+        .total-price { font-size: 1.2rem; font-weight: bold; color: #007bff; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; color: white; font-weight: bold; }
+        
+        .btn-pay { background: #ffc107; color: #333; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-pay:hover { background: #e0a800; }
 
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        body {
-          font-family: "Sarabun", sans-serif;
-          color: #ffffff;
-          overflow-x: hidden;
-          background: #0a0a0a;
-        }
-
-        .orders-page-wrapper {
-          position: relative;
-          z-index: 10;
-          min-height: 100vh;
-        }
-
-        /* Navigation */
-        .top-navigation {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 1000;
-          padding: 1rem 0;
-          transition: all 0.3s ease;
-        }
-
-        .top-navigation.scrolled {
-          background: rgba(10, 10, 10, 0.8);
-          backdrop-filter: blur(20px);
-          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 0 2rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .nav-logo {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          font-weight: 700;
-          font-size: 1.25rem;
-          font-family: "Inter", sans-serif;
-        }
-
-        .logo-icon {
-          font-size: 2rem;
-          filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-        }
-
-        .logo-text {
-          background: linear-gradient(135deg, #fff 0%, #b0bec5 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .nav-menu {
-          position: relative;
-        }
-
-        .user-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 1.5rem;
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 50px;
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .user-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-          transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(176, 190, 197, 0.3);
-        }
-
-        .user-avatar {
-          font-size: 1.5rem;
-        }
-
-        .dropdown-arrow {
-          font-size: 0.75rem;
-          transition: transform 0.3s ease;
-        }
-
-        .user-btn:hover .dropdown-arrow {
-          transform: rotate(180deg);
-        }
-
-        .user-dropdown {
-          position: absolute;
-          top: calc(100% + 1rem);
-          right: 0;
-          min-width: 280px;
-          background: rgba(10, 10, 10, 0.95);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-          animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .dropdown-header {
-          padding: 1.25rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          background: linear-gradient(135deg, rgba(144, 164, 174, 0.2), rgba(96, 125, 139, 0.2));
-        }
-
-        .dropdown-avatar {
-          font-size: 2rem;
-        }
-
-        .dropdown-name {
-          font-weight: 600;
-          font-size: 0.9375rem;
-        }
-
-        .dropdown-item {
-          width: 100%;
-          padding: 1rem 1.25rem;
-          background: transparent;
-          border: none;
-          color: rgba(255, 255, 255, 0.8);
-          text-align: left;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-size: 0.9375rem;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .dropdown-item:hover {
-          background: rgba(255, 255, 255, 0.05);
-          color: white;
-          padding-left: 1.5rem;
-        }
-
-        .dropdown-item.logout {
-          color: #ff6b6b;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .dropdown-item.logout:hover {
-          background: rgba(255, 107, 107, 0.1);
-        }
-
-        /* Animated Background */
-        .animated-bg {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(120deg, #607d8b, #455a64, #263238);
-          z-index: -1;
-        }
-
-        .particle {
-          position: absolute;
-          width: 4px;
-          height: 4px;
-          background: rgba(255, 255, 255, 0.5);
-          border-radius: 50%;
-          animation: float 12s infinite linear;
-        }
-
-        @keyframes float {
-          0% {
-            transform: translateY(0);
-            opacity: 0;
-          }
-          15% {
-            opacity: 1;
-          }
-          85% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-110vh);
-            opacity: 0;
-          }
-        }
-
-        /* Content */
-        .orders-container {
-          padding: 120px 30px 30px;
-          max-width: 1300px;
-          margin: auto;
-          position: relative;
-          z-index: 1;
-        }
-
-        .orders-header {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          margin-bottom: 30px;
-        }
-
-        .orders-header h1 {
-          color: white;
-          font-size: 32px;
-          text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .subtitle {
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 15px;
-        }
-
-        .top-button {
-          align-self: flex-end;
-          margin-top: -40px;
-        }
-
-        /* Summary Cards */
-        .summary-cards {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 18px;
-          margin-bottom: 30px;
-        }
-
-        .card {
-          padding: 25px;
-          border-radius: 14px;
-          color: white;
-          text-align: left;
-          box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
-          font-size: 28px;
-          margin-bottom: 4px;
-        }
-
-        .card.purple { background: #6a5af9; }
-        .card.green { background: #38c964; }
-        .card.blue  { background: #00b7ff; }
-        .card.orange{ background: #ff9900; }
-
-        /* Order Section */
-        .orders-list {
-          background: white;
-          padding: 30px;
-          border-radius: 16px;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .list-title {
-          font-size: 20px;
-          margin-bottom: 20px;
-          font-weight: 600;
-          color: #000;
-        }
-
-        .no-orders-box {
-          text-align: center;
-          padding: 40px 20px;
-          color: #777;
-        }
-
-        .no-orders-icon {
-          font-size: 48px;
-          margin-bottom: 10px;
-        }
-
-        .no-orders-box h3 {
-          color: #333;
-          margin-bottom: 10px;
-        }
-
-        .no-orders-box p {
-          margin-bottom: 20px;
-        }
-
-        .no-orders-box a {
-          color: white;
-          text-decoration: none;
-        }
-
-        /* Buttons */
-        .btn-primary {
-          background: #6a5af9;
-          padding: 11px 28px;
-          border-radius: 10px;
-          border: none;
-          font-size: 16px;
-          color: white;
-          cursor: pointer;
-          transition: 0.2s;
-        }
-
-        .btn-primary:hover {
-          opacity: 0.9;
-        }
-
-        /* Footer */
-        .footer {
-          text-align: center;
-          margin-top: 40px;
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.8);
-        }
-
-        .dev-name {
-          font-weight: 700;
-          margin-top: -4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-          .summary-cards {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-
-        @media (max-width: 600px) {
-          .summary-cards {
-            grid-template-columns: 1fr;
-          }
-        }
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; }
+        .file-upload-box { border: 2px dashed #ccc; padding: 20px; margin: 20px 0; border-radius: 10px; cursor: pointer; position: relative; }
+        .file-upload-box:hover { border-color: #007bff; background: #f8f9fa; }
+        .preview-img { max-width: 100%; max-height: 200px; border-radius: 5px; margin-top: 10px; }
+        .btn-submit { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+        .btn-close { background: transparent; border: none; color: #999; position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; }
       `}</style>
 
-      <div className="orders-page-wrapper">
-        {/* Animated Background */}
-        <div className="animated-bg"></div>
-
-        {/* TOP NAVIGATION */}
-        <nav className={`top-navigation ${scrolled ? 'scrolled' : ''}`}>
-          <div className="nav-container">
-            <div className="nav-logo">
-              <div className="logo-icon"></div>
-              <span className="logo-text">เสื้อเฉลิมฉลองเมือง 243 ปี</span>
-            </div>
-
-            <div className="nav-menu">
-              <button
-                className="user-btn"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <span className="user-avatar"></span>
-                <span className="user-text">สมชัน</span>
-                <span className="dropdown-arrow">▼</span>
-              </button>
-
-              {showUserMenu && (
-                <div className="user-dropdown">
-                  <div className="dropdown-header">
-                    <span className="dropdown-avatar"></span>
-                    <span className="dropdown-name">นาย สมชัน</span>
-                  </div>
-
-                  <button
-                    className="dropdown-item"
-                    onClick={() => router.push('/order')}
-                  >
-                     สั่งซื้อเสื้อ
-                  </button>
-
-                  <button
-                    className="dropdown-item"
-                    onClick={() => router.push('/orders')}
-                  >
-                     ประวัติการสั่งซื้อ
-                  </button>
-
-                  <button
-                    className="dropdown-item logout"
-                    onClick={() => router.push('/login')}
-                  >
-                     ออกจากระบบ
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </nav>
-
-        {/* CONTENT */}
-        <div className="orders-container">
-          <header className="orders-header">
-            <h1> ประวัติการสั่งซื้อเสื้อ</h1>
-            <p className="subtitle">รายการคำสั่งซื้อเสื้อเฉลิมฉลองเมือง 243 ปี</p>
-
-            <button className="btn-primary top-button">
-              ➕ สั่งซื้อเสื้อใหม่
-            </button>
-          </header>
-
-          {/* การ์ดสรุป 4 ช่อง */}
-          <section className="summary-cards">
-            <div className="card purple">
-              <h2>0</h2>
-              <p>คำสั่งซื้อทั้งหมด</p>
-            </div>
-
-            <div className="card green">
-              <h2>0</h2>
-              <p>เสื้อที่สั่งทั้งหมด</p>
-            </div>
-
-            <div className="card blue">
-              <h2>฿0</h2>
-              <p>ยอดรวมที่จ่าย</p>
-            </div>
-
-            <div className="card orange">
-              <h2>0</h2>
-              <p>สถานะที่หลากหลาย</p>
-            </div>
-          </section>
-
-          {/* รายการคำสั่งซื้อ */}
-          <section className="orders-list">
-            <h2 className="list-title"> รายการคำสั่งซื้อ</h2>
-
-            <div className="no-orders-box">
-              <div className="no-orders-icon"></div>
-              <h3>ยังไม่มีประวัติการสั่งซื้อ</h3>
-              <p>เมื่อคุณสั่งซื้อเสื้อแล้ว ประวัติจะแสดงที่นี่</p>
-              <button className="btn-primary">
-                <a href="/">➕ สั่งซื้อเสื้อเลย</a>
-              </button>
-            </div>
-          </section>
-
-          <footer className="footer">
-            <p>พัฒนาโดย</p>
-            <p className="dev-name">นาย สมพง ใยคำ</p>
-            <p className="dev-name">นาย สุพัน ชัยนอก</p>
-            <p className="dev-name">นาย สรรพสิทธิ์ ยาเคน</p>
-            
-            <p>PS Intelligent Unit - มหาวิทยาลัยราชภัฏศรีสะเกษ</p>
-          </footer>
+      <div className="container">
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <h1 className="page-title">📦 ประวัติการสั่งซื้อของฉัน</h1>
+            <button onClick={() => router.push('/')} style={{background: 'none', border: 'none', cursor: 'pointer', color: '#666'}}>← กลับหน้าหลัก</button>
         </div>
+
+        {loading ? (
+          <p style={{textAlign: 'center'}}>กำลังโหลดข้อมูล...</p>
+        ) : orders.length === 0 ? (
+          <div style={{textAlign: 'center', padding: 50, color: '#888'}}>
+             <h2>ยังไม่มีรายการสั่งซื้อ</h2>
+             <Link href="/order" style={{color: '#007bff'}}>ไปสั่งซื้อสินค้ากันเถอะ</Link>
+          </div>
+        ) : (
+          orders.map((order: any) => {
+            const hasSlip = order.payment?.slipUrl ? true : false;
+            const statusInfo = getStatusBadge(order.status, hasSlip);
+            
+            return (
+              <div key={order._id} className="order-card">
+                <div className="order-header">
+                  <span>#{order.orderNumber}</span>
+                  <span>{new Date(order.createdAt).toLocaleDateString('th-TH')}</span>
+                </div>
+
+                <div className="order-items">
+                  {order.items.map((item: any, idx: number) => (
+                    <div key={idx} className="item-row">
+                      <span>{item.productName} ({item.size}) x{item.quantity}</span>
+                      <span>฿{(item.price * item.quantity).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="order-footer">
+                   <div>
+                        <span className="status-badge" style={{background: statusInfo.bg}}>
+                            {statusInfo.text}
+                        </span>
+                        {hasSlip && order.status === 'pending' && <div style={{fontSize: '12px', color: '#17a2b8', marginTop: 5}}>แนบสลิปแล้ว รอตรวจสอบ</div>}
+                   </div>
+
+                   <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
+                      <span className="total-price">฿{order.totalAmount.toLocaleString()}</span>
+                      
+                      {/* แสดงปุ่มแจ้งชำระเงิน ถ้าสถานะเป็น pending และยังไม่มีสลิป */}
+                      {order.status === 'pending' && !hasSlip && (
+                          <button 
+                            className="btn-pay"
+                            onClick={() => {
+                                setSelectedOrderId(order._id);
+                                setShowModal(true);
+                            }}
+                          >
+                            💸 แจ้งโอน
+                          </button>
+                      )}
+                   </div>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
-    </>
+
+      {/* Modal แจ้งชำระเงิน */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="btn-close" onClick={() => setShowModal(false)}>&times;</button>
+            <h2>แจ้งชำระเงิน</h2>
+            <p style={{color: '#666', fontSize: '14px', marginBottom: 20}}>กรุณาแนบรูปสลิปการโอนเงิน</p>
+
+            <form onSubmit={handleSubmitPayment}>
+                <div className="file-upload-box">
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleFileChange}
+                        style={{position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, opacity: 0, cursor: 'pointer'}}
+                    />
+                    {!slipFile ? (
+                        <div style={{color: '#aaa'}}>
+                           📂 คลิกเพื่อเลือกรูปภาพ
+                        </div>
+                    ) : (
+                        <img src={slipFile} alt="Preview" className="preview-img" />
+                    )}
+                </div>
+
+                <button type="submit" className="btn-submit" disabled={uploading}>
+                    {uploading ? 'กำลังส่งข้อมูล...' : 'ยืนยันการแจ้งโอน'}
+                </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

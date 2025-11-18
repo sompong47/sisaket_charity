@@ -3,49 +3,106 @@
 import "./globals.css";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import api from "@/utils/api"; // เรียกใช้ API ตัวกลาง
+
+// Interface สำหรับข้อมูลสถิติ
+interface SizeStat {
+  size: string;
+  count: number;
+  color?: string;
+}
+
+interface ProductStat {
+  id: string;
+  name: string;
+  image: string;
+  totalStock: number;
+  sizes: SizeStat[];
+}
 
 export default function Page() {
-  const [selectedType, setSelectedType] = useState('normal');
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
   const router = useRouter();
+  
+  // UI State
+  const [scrolled, setScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
+  
+  // Data State
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalShirtsSold: 0,
+    inventory: [] as ProductStat[]
+  });
+  const [loading, setLoading] = useState(true);
+  const [selectedProductIndex, setSelectedProductIndex] = useState(0); // ใช้ Index แทน Type string เพื่อความชัวร์
 
+  // สีประจำไซซ์ (Mapping)
+  const sizeColors: Record<string, string> = {
+    'SSS': '#64748b', 'SS': '#94a3b8',
+    'S': '#10b981',  // เขียว
+    'M': '#8b5cf6',  // ม่วง
+    'L': '#3b82f6',  // ฟ้า
+    'XL': '#ec4899', // ชมพู
+    '2XL': '#f59e0b', // ส้ม
+    '3XL': '#ef4444', // แดง
+    '4XL': '#7f1d1d', '5XL': '#000000'
+  };
+
+  // 1. โหลดข้อมูลเมื่อเข้าเว็บ
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    // 1.1 เช็ค User Login
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try { setCurrentUser(JSON.parse(savedUser)); } catch (e) {}
+    }
+
+    // 1.2 ดึงสถิติจาก Backend
+    const fetchStats = async () => {
+      try {
+        const { data } = await api.get('/api/statistics/public');
+        if (data.success) {
+          setStats(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to load stats", error);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchStats();
+
+    // 1.3 Scroll & Particles Effect
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
-    // Create particles
-    const newParticles = Array.from({length: 20}, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100
-    }));
-    setParticles(newParticles);
+    setParticles(Array.from({length: 20}, (_, i) => ({
+      id: i, x: Math.random() * 100, y: Math.random() * 100
+    })));
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const normalSizes = [
-    { size: 'L', count: 8303, color: '#3b82f6' },
-    { size: 'M', count: 6977, color: '#8b5cf6' },
-    { size: 'XL', count: 3277, color: '#ec4899' },
-    { size: 'S', count: 3693, color: '#10b981' },
-    { size: '2XL', count: 2057, color: '#f59e0b' },
-    { size: '3XL', count: 655, color: '#ef4444' },
-  ];
+  // ฟังก์ชัน Logout
+  const handleLogout = () => {
+    localStorage.clear();
+    setCurrentUser(null);
+    setShowUserMenu(false);
+    router.push('/login');
+  };
 
-  const poloSizes = [
-    { size: 'M', count: 932, color: '#64748b' },
-    { size: 'L', count: 888, color: '#475569' },
-    { size: 'S', count: 829, color: '#334155' },
-    { size: 'XL', count: 706, color: '#1e293b' },
-    { size: '2XL', count: 298, color: '#0f172a' },
-  ];
-
-  const currentSizes = selectedType === 'normal' ? normalSizes : poloSizes;
+  // ข้อมูลสินค้าที่เลือกอยู่ปัจจุบัน (สำหรับกราฟ)
+  const currentProduct = stats.inventory[selectedProductIndex] || { sizes: [], name: 'กำลังโหลด...', totalStock: 0 };
+  
+  // จัดเรียงไซซ์และใส่สี
+  const displaySizes = currentProduct.sizes.map(s => ({
+    ...s,
+    color: sizeColors[s.size] || '#cccccc'
+  }));
+  
+  // หาค่ามากสุดเพื่อทำหลอดพลัง (Progress Bar)
+  const maxCount = Math.max(...displaySizes.map(s => s.count), 1);
 
   return (
     <div className="page">
@@ -73,43 +130,43 @@ export default function Page() {
           </div>
 
           <div className="nav-menu">
-            <button
-              className="user-btn"
-              onClick={() => setShowUserMenu(!showUserMenu)}
-            >
-              <span className="user-avatar"></span>
-              <span className="user-text">สมชัน</span>
-              <span className="dropdown-arrow">▼</span>
-            </button>
-
-            {showUserMenu && (
-              <div className="user-dropdown">
-                <div className="dropdown-header">
-                  <span className="dropdown-avatar"></span>
-                  <span className="dropdown-name">นาย สมชัน</span>
-                </div>
-
-                <button
-                  className="dropdown-item"
-                  onClick={() => router.push('/order')}
-                >
-                  สั่งซื้อเสื้อ
+            {currentUser ? (
+              // ✅ กรณีล็อกอินแล้ว: แสดงชื่อและเมนู
+              <>
+                <button className="user-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
+                  <span className="user-avatar"></span>
+                  <span className="user-text">{currentUser.name}</span>
+                  <span className="dropdown-arrow">▼</span>
                 </button>
 
-                <button
-                  className="dropdown-item"
-                  onClick={() => router.push('/orders')}
-                >
-                  ประวัติการสั่งซื้อ
-                </button>
-
-                <button
-                  className="dropdown-item logout"
-                  onClick={() => router.push('/login')}
-                >
-                  ออกจากระบบ
-                </button>
-              </div>
+                {showUserMenu && (
+                  <div className="user-dropdown">
+                    <div className="dropdown-header">
+                      <span className="dropdown-avatar"></span>
+                      <span className="dropdown-name">คุณ {currentUser.name}</span>
+                    </div>
+                    <button className="dropdown-item" onClick={() => router.push('/order')}>
+                       สั่งซื้อเสื้อ
+                    </button>
+                    <button className="dropdown-item" onClick={() => router.push('/orders')}>
+                       ประวัติการสั่งซื้อ
+                    </button>
+                    {currentUser.role === 'admin' && (
+                        <button className="dropdown-item" onClick={() => router.push('/admin')}>
+                           เมนูแอดมิน
+                        </button>
+                    )}
+                    <button className="dropdown-item logout" onClick={handleLogout}>
+                       ออกจากระบบ
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              // ✅ กรณีไม่ได้ล็อกอิน: แสดงปุ่มเข้าสู่ระบบ
+              <button className="btn-primary" style={{padding: '8px 20px', fontSize: '14px'}} onClick={() => router.push('/login')}>
+                 เข้าสู่ระบบ
+              </button>
             )}
           </div>
         </div>
@@ -121,18 +178,19 @@ export default function Page() {
           <div className="hero-badge">✨ ฉลองเมือง 243 ปี</div>
           <h1 className="hero-title">
             เสื้อเฉลิมฉลอง
-            <span className="gradient-text">เมือง 243 ปี</span>
+            <span className="gradient-text"> เมือง 243 ปี</span>
           </h1>
           <p className="hero-subtitle">
-            หอการค้าจังหวัดศรีสะเกษร่วมกับบริษัทประชารัฐรักสามัคคีศรีสะเกษ (วิสาหกิจเพื่อสังคม) จำกัด จัดจำหน่ายเสื้อสู่ขวัญบ้าน บายศรีเมือง รุ่งเรือง 243 ปีโดยรายได้จากการขายเสื้อหลังหักค่าใช้จ่าย จะนำมาเป็นเงินจัดงาน สู่ขวัญบ้าน บายศรีเมือง รุ่งเรือง 243 ปี
+            หอการค้าจังหวัดศรีสะเกษร่วมกับบริษัทประชารัฐรักสามัคคีศรีสะเกษ จัดจำหน่ายเสื้อที่ระลึก
+            รายได้หลังหักค่าใช้จ่ายจะนำมาเป็นเงินจัดงาน "สู่ขวัญบ้าน บายศรีเมือง รุ่งเรือง 243 ปี"
           </p>
           <div className="hero-actions">
-            <button className="btn-primary" onClick={() => router.push('/order')}>
-              <span>สั่งซื้อเลย</span>
+            <button className="btn-primary" onClick={() => router.push(currentUser ? '/order' : '/login')}>
+              <span>{currentUser ? 'สั่งซื้อเลย' : 'เข้าสู่ระบบเพื่อสั่งซื้อ'}</span>
               <span className="btn-arrow">→</span>
             </button>
             <button className="btn-secondary" onClick={() => window.open('https://www.facebook.com/share/p/1CyNAH9ARu/', '_blank')}>
-              <span>ดูรายละเอียด</span>
+              <span>ดูรายละเอียดกิจกรรม</span>
             </button>
           </div>
         </div>
@@ -141,108 +199,119 @@ export default function Page() {
       {/* Main Content */}
       <div className="content-container">
         
-        {/* Product Showcase */}
+        {/* Product Showcase & Stats */}
         <section className="product-showcase">
           <div className="showcase-grid">
+            {/* รูปภาพสินค้า (ดึงรูปแรกของสินค้าที่เลือก หรือรูป Default) */}
             <div className="product-image-card">
               <div className="image-wrapper">
-                <img src="/shirt_243_black.jpg" alt="เสื้อ 243 ปี" />
-                <div className="image-overlay">
-                </div>
+                <img 
+                    src={currentProduct.image || "/shirt_243_black.jpg"} 
+                    alt="เสื้อ 243 ปี" 
+                    onError={(e) => e.currentTarget.src = 'https://placehold.co/600x600?text=No+Image'}
+                />
+                <div className="image-overlay"></div>
               </div>
               <div className="price-banner">
-                <span className="price-label">ราคาพิเศษ</span>
+                <span className="price-label">ราคาเดียว</span>
                 <span className="price-amount">198 บาท</span>
               </div>
             </div>
 
+            {/* ข้อมูลสถิติ (Real Data) */}
             <div className="product-info-card">
               <div className="info-header">
-                <h2>ข้อมูลสินค้า</h2>
-                <span className="stock-badge"> พร้อมส่ง</span>
+                <h2>สถิติโครงการ</h2>
+                <span className="stock-badge"> อัปเดตล่าสุด</span>
               </div>
               
               <div className="stats-showcase">
                 <div className="stat-box stat-primary">
-                  <div className="stat-icon"></div>
+                  <div className="stat-icon">👕</div>
                   <div className="stat-content">
-                    <span className="stat-number">31,619</span>
+                    {/* ยอดขายจริง */}
+                    <span className="stat-number">{stats.totalShirtsSold.toLocaleString()}</span>
                     <span className="stat-label">ตัว</span>
                   </div>
-                  <span className="stat-description">เสื้อสีขาว</span>
+                  <span className="stat-description">ยอดจองทั้งหมด</span>
                 </div>
                 
                 <div className="stat-box stat-secondary">
-                  <div className="stat-icon"></div>
+                  <div className="stat-icon">📦</div>
                   <div className="stat-content">
-                    <span className="stat-number">1,899</span>
+                    {/* จำนวนออเดอร์จริง */}
+                    <span className="stat-number">{stats.totalOrders.toLocaleString()}</span>
                     <span className="stat-label">รายการ</span>
                   </div>
-                  <span className="stat-description">ออเดอร์ทั้งหมด</span>
+                  <span className="stat-description">คำสั่งซื้อทั้งหมด</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Size Selection */}
+        {/* Size Selection / Inventory Chart */}
         <section className="size-section">
           <div className="section-header">
-            <h2 className="section-title">เลือกแบบเสื้อที่คุณชอบ</h2>
-            <p className="section-subtitle">เรามีให้เลือก 2 แบบ พร้อมหลากหลายไซซ์</p>
+            <h2 className="section-title">สินค้าที่มีจำหน่าย</h2>
+            <p className="section-subtitle">สต็อกปัจจุบันในระบบ (Real-time Inventory)</p>
           </div>
 
-          <div className="type-selector">
-            <button
-              className={`type-btn ${selectedType === 'normal' ? 'active' : ''}`}
-              onClick={() => setSelectedType('normal')}
-            >
-              <span className="type-icon"></span>
-              <span className="type-name">เสื้อสีปกติ</span>
-              <span className="type-count">27,328 ตัว</span>
-            </button>
-            
-            <button
-              className={`type-btn ${selectedType === 'polo' ? 'active' : ''}`}
-              onClick={() => setSelectedType('polo')}
-            >
-              <span className="type-icon"></span>
-              <span className="type-name">เสื้อไว้ทุกข์</span>
-              <span className="type-count">4,291 ตัว</span>
-            </button>
-          </div>
-
-          <div className="sizes-display">
-            <h3 className="sizes-title">
-              ไซซ์ที่มีจำหน่าย - {selectedType === 'normal' ? 'เสื้อสีขาว' : 'เสื้อโปโลดำ'}
-            </h3>
-            <div className="sizes-grid">
-              {currentSizes.map((item, index) => (
-                <div
-                  key={index}
-                  className="size-card"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="size-header">
-                    <span className="size-name">{item.size}</span>
-                    <div 
-                      className="size-indicator"
-                      style={{ background: item.color }}
-                    />
-                  </div>
-                  <div className="size-count">{item.count.toLocaleString()}</div>
-                  <div className="size-label">ตัว</div>
-                  <div 
-                    className="size-progress"
-                    style={{
-                      width: `${(item.count / Math.max(...currentSizes.map(s => s.count))) * 100}%`,
-                      background: item.color
-                    }}
-                  />
+          {/* ปุ่มเลือกประเภทสินค้า (สร้างตามข้อมูลจริงที่ดึงมา) */}
+          {stats.inventory.length > 0 ? (
+            <>
+                <div className="type-selector">
+                    {stats.inventory.map((prod, index) => (
+                    <button
+                        key={prod.id}
+                        className={`type-btn ${selectedProductIndex === index ? 'active' : ''}`}
+                        onClick={() => setSelectedProductIndex(index)}
+                    >
+                        <span className="type-icon" style={{backgroundImage: `url(${prod.image})`, backgroundSize:'cover'}}></span>
+                        <span className="type-name">{prod.name}</span>
+                        <span className="type-count">เหลือ {prod.totalStock.toLocaleString()}</span>
+                    </button>
+                    ))}
                 </div>
-              ))}
+
+                <div className="sizes-display">
+                    <h3 className="sizes-title">
+                    จำนวนคงเหลือ - {currentProduct.name}
+                    </h3>
+                    <div className="sizes-grid">
+                    {displaySizes.map((item, index) => (
+                        <div
+                        key={index}
+                        className="size-card"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                        <div className="size-header">
+                            <span className="size-name">{item.size}</span>
+                            <div 
+                            className="size-indicator"
+                            style={{ background: item.color }}
+                            />
+                        </div>
+                        <div className="size-count">{item.count.toLocaleString()}</div>
+                        <div className="size-label">ตัว</div>
+                        <div 
+                            className="size-progress"
+                            style={{
+                            width: `${(item.count / maxCount) * 100}%`,
+                            background: item.color
+                            }}
+                        />
+                        </div>
+                    ))}
+                    {displaySizes.length === 0 && <p style={{textAlign:'center', width:'100%', color:'#888'}}>ไม่มีข้อมูลสต็อก</p>}
+                    </div>
+                </div>
+            </>
+          ) : (
+            <div style={{textAlign:'center', padding:'50px', color:'#888'}}>
+                {loading ? 'กำลังโหลดข้อมูลสินค้า...' : 'ยังไม่มีสินค้าในระบบ'}
             </div>
-          </div>
+          )}
         </section>
 
         {/* Footer */}

@@ -12,7 +12,7 @@ interface FormData {
   email: string;
   address: string;
   note: string;
-  acceptMarketing: boolean;
+  acceptMarketing: boolean; // ใช้สำหรับเช็คว่าต้องการส่งไปรษณีย์ไหม
 }
 
 interface FormErrors {
@@ -69,6 +69,8 @@ export default function OrderPage() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [currentUser, setCurrentUser] = useState({ name: 'ผู้ใช้งาน' });
+  
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -78,10 +80,36 @@ export default function OrderPage() {
     note: '',
     acceptMarketing: false,
   });
+  
   const [errors, setErrors] = useState<FormErrors>({});
   const [showDeliveryInfo, setShowDeliveryInfo] = useState(false);
 
+  // 1. ดึงข้อมูลผู้ใช้เมื่อเข้าหน้าเว็บ
   useEffect(() => {
+    // เช็ค Token
+    const token = localStorage.getItem('token');
+    if (!token) {
+       // ถ้าบังคับล็อกอินให้เปิดบรรทัดนี้
+       // router.push('/login');
+    }
+
+    // ดึงข้อมูล User มาใส่ Form อัตโนมัติ
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      const userObj = JSON.parse(savedUser);
+      setCurrentUser(userObj);
+
+      // แยกชื่อ-นามสกุล (แบบง่าย)
+      const nameParts = userObj.name ? userObj.name.split(' ') : ['', ''];
+      
+      setFormData(prev => ({
+        ...prev,
+        firstName: nameParts[0] || '',
+        lastName: nameParts.slice(1).join(' ') || '',
+        phone: userObj.phone || ''
+      }));
+    }
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
@@ -89,6 +117,7 @@ export default function OrderPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // สร้าง Background Particles
   useEffect(() => {
     const bg = document.querySelector(`.${styles.animatedBg}`);
     if (bg && bg.children.length === 0) {
@@ -123,17 +152,23 @@ export default function OrderPage() {
     }
   };
 
+  // 2. เมื่อกดถัดไป
   const handleSubmit = () => {
     const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) newErrors.firstName = 'กรุณากรอกชื่อ';
     if (!formData.lastName.trim()) newErrors.lastName = 'กรุณากรอกนามสกุล';
+    
     if (!formData.phone.trim()) {
       newErrors.phone = 'กรุณากรอกเบอร์โทรศัพท์';
     } else if (!validatePhone(formData.phone)) {
       newErrors.phone = 'กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง';
     }
-    if (!formData.address.trim()) newErrors.address = 'กรุณากรอกที่อยู่สำหรับจัดส่ง';
+
+    // บังคับกรอกที่อยู่ ถ้าเลือกจัดส่ง
+    if (formData.acceptMarketing && !formData.address.trim()) {
+        newErrors.address = 'กรุณากรอกที่อยู่สำหรับจัดส่ง';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -141,12 +176,27 @@ export default function OrderPage() {
       return;
     }
 
-    console.log('📦 Form submitted:', formData);
+    // ✅ บันทึกข้อมูลลง LocalStorage เพื่อส่งต่อให้หน้าถัดไป (/zizes)
+    const customerInfo = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        note: formData.note,
+        isDelivery: formData.acceptMarketing
+    };
+    localStorage.setItem('tempOrderCustomer', JSON.stringify(customerInfo));
+
+    console.log('📦 Saved Customer Info:', customerInfo);
+    
+    // ไปหน้าเลือกสินค้า
     router.push('/zizes');
   };
 
-  const handleGoHome = () => {
-    router.push('/');
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/login');
   };
 
   return (
@@ -158,7 +208,6 @@ export default function OrderPage() {
       <nav className={`${styles.topNavigation} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.navContainer}>
           <div className={styles.navLogo}>
-
             <span className={styles.logoText}>เสื้อเฉลิมฉลอง ศรีสะเกษ 243 ปี</span>
           </div>
           <div className={styles.navMenu}>
@@ -167,27 +216,18 @@ export default function OrderPage() {
               onClick={() => setShowDropdown(!showDropdown)}
             >
               <span className={styles.userAvatar}></span>
-              <span className={styles.userText}>บัญชีของฉัน</span>
+              <span className={styles.userText}>{currentUser.name}</span>
               <span className={styles.dropdownArrow}>▼</span>
             </button>
             {showDropdown && (
               <div className={styles.userDropdown}>
                 <div className={styles.dropdownHeader}>
                   <span className={styles.dropdownAvatar}></span>
-                  <span className={styles.dropdownName}>ผู้ใช้งาน</span>
+                  <span className={styles.dropdownName}>{currentUser.name}</span>
                 </div>
-                <button className="dropdown-item" onClick={() => router.push('/order')}>
-       สั่งซื้อเสื้อ
-    </button>
-                <button
-                  className="dropdown-item"
-                  onClick={() => router.push('/orders')}
-                >
-                  ประวัติการสั่งซื้อ
-                </button>
-                <button className="dropdown-item logout" onClick={() => router.push('/login')}>
-       ออกจากระบบ
-    </button>
+                <button className={styles.dropdownItem} onClick={() => router.push('/order')}>สั่งซื้อเสื้อ</button>
+                <button className={styles.dropdownItem} onClick={() => router.push('/orders')}>ประวัติการสั่งซื้อ</button>
+                <button className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>ออกจากระบบ</button>
               </div>
             )}
           </div>
@@ -210,7 +250,7 @@ export default function OrderPage() {
             </div>
             <div className={styles.step}>
               <div className={styles.stepNumber}>2</div>
-              <span>เลือกแบบและขนาดเสื้อ</span>
+              <span>เลือกแบบและขนาด</span>
             </div>
             <div className={styles.step}>
               <div className={styles.stepNumber}>3</div>
@@ -221,22 +261,15 @@ export default function OrderPage() {
           {/* Image Slider */}
           <div className={styles.imageSlider}>
             <Swiper>
-              <SwiperSlide>
-                <img src="/sisaket10.jpg" alt="เสื้อแบบที่ 1" className={styles.sliderImage} />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src="/sisaket4.jpg" alt="เสื้อแบบที่ 2" className={styles.sliderImage} />
-              </SwiperSlide>
-              <SwiperSlide>
-                <img src="/sisaket2.jpg" alt="เสื้อแบบที่ 3" className={styles.sliderImage} />
-              </SwiperSlide>
+              <SwiperSlide><img src="/sisaket10.jpg" alt="แบบที่ 1" className={styles.sliderImage} /></SwiperSlide>
+              <SwiperSlide><img src="/sisaket4.jpg" alt="แบบที่ 2" className={styles.sliderImage} /></SwiperSlide>
+              <SwiperSlide><img src="/sisaket2.jpg" alt="แบบที่ 3" className={styles.sliderImage} /></SwiperSlide>
             </Swiper>
           </div>
 
           {/* Form Section */}
           <div className={styles.formSection}>
             <div className={styles.formContent}>
-              {/* Section Title */}
               <div className={styles.sectionTitle}>
                 <h2 className={styles.sectionText}>ข้อมูลผู้สั่งซื้อ</h2>
               </div>
@@ -244,137 +277,67 @@ export default function OrderPage() {
               {/* Name Fields */}
               <div className={styles.fieldGroup}>
                 <div className={styles.fieldWrapper}>
-                  <label className={styles.label}>
-                    ชื่อ <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="ชื่อจริง"
-                    className={errors.firstName ? styles.inputError : styles.input}
-                  />
+                  <label className={styles.label}>ชื่อ <span className={styles.required}>*</span></label>
+                  <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="ชื่อจริง" className={errors.firstName ? styles.inputError : styles.input} />
                   {errors.firstName && <p className={styles.errorText}>{errors.firstName}</p>}
                 </div>
-
                 <div className={styles.fieldWrapper}>
-                  <label className={styles.label}>
-                    นามสกุล <span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="นามสกุล"
-                    className={errors.lastName ? styles.inputError : styles.input}
-                  />
+                  <label className={styles.label}>นามสกุล <span className={styles.required}>*</span></label>
+                  <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="นามสกุล" className={errors.lastName ? styles.inputError : styles.input} />
                   {errors.lastName && <p className={styles.errorText}>{errors.lastName}</p>}
                 </div>
               </div>
 
               {/* Phone */}
               <div className={styles.fieldWrapper}>
-                <label className={styles.label}>
-                  เบอร์โทรศัพท์ <span className={styles.required}>*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="08x-xxx-xxxx"
-                  className={errors.phone ? styles.inputError : styles.input}
-                />
+                <label className={styles.label}>เบอร์โทรศัพท์ <span className={styles.required}>*</span></label>
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="08x-xxx-xxxx" className={errors.phone ? styles.inputError : styles.input} />
                 {errors.phone && <p className={styles.errorText}>{errors.phone}</p>}
               </div>
 
               {/* Email */}
               <div className={styles.fieldWrapper}>
                 <label className={styles.label}>อีเมล</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="example@email.com"
-                  className={styles.input}
-                />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="example@email.com" className={styles.input} />
               </div>
 
-              {/* Address */}
+              {/* Delivery Checkbox */}
+              <div className={styles.checkboxWrapper}>
+                <input type="checkbox" name="acceptMarketing" id="acceptMarketing" checked={formData.acceptMarketing} onChange={(e) => { handleChange(e); setShowDeliveryInfo(e.target.checked); }} className={styles.checkbox} />
+                <label htmlFor="acceptMarketing" className={styles.checkboxLabel}>
+                  ต้องการให้จัดส่งเสื้อทางไปรษณีย์
+                  <span className={styles.checkboxNote}> (หากไม่เลือก ท่านจะต้องมารับเสื้อด้วยตนเอง)</span>
+                </label>
+              </div>
+
+              {showDeliveryInfo && (
+                <div className={styles.deliveryInfoBox}>
+                  <strong>🚚 การจัดส่งทางไปรษณีย์</strong><br />
+                  ค่าจัดส่ง: ตัวแรก 50 บาท ตัวถัดไป +10 บาท
+                </div>
+              )}
+
+              {/* Address (แสดงเมื่อเลือกส่งไปรษณีย์ หรือจะให้กรอกตลอดก็ได้) */}
               <div className={styles.fieldWrapper}>
                 <label className={styles.label}>
-                  ที่อยู่สำหรับจัดส่ง <span className={styles.required}>*</span>
+                   ที่อยู่สำหรับจัดส่ง {formData.acceptMarketing && <span className={styles.required}>*</span>}
                 </label>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  rows={3}
-                  placeholder="ที่อยู่ สำหรับจัดส่ง"
-                  className={errors.address ? styles.textareaError : styles.textarea}
-                />
+                <textarea name="address" value={formData.address} onChange={handleChange} rows={3} placeholder="บ้านเลขที่, หมู่, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์" className={errors.address ? styles.textareaError : styles.textarea} />
                 {errors.address && <p className={styles.errorText}>{errors.address}</p>}
               </div>
 
               {/* Note */}
               <div className={styles.fieldWrapper}>
                 <label className={styles.label}>หมายเหตุ</label>
-                <textarea
-                  name="note"
-                  value={formData.note}
-                  onChange={handleChange}
-                  rows={2}
-                  placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"
-                  className={styles.textarea}
-                />
+                <textarea name="note" value={formData.note} onChange={handleChange} rows={2} placeholder="รายละเอียดเพิ่มเติม..." className={styles.textarea} />
               </div>
-
-              {/* Checkbox */}
-              <div className={styles.checkboxWrapper}>
-                <input
-                  type="checkbox"
-                  name="acceptMarketing"
-                  id="acceptMarketing"
-                  checked={formData.acceptMarketing}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setShowDeliveryInfo(e.target.checked);
-                  }}
-                  className={styles.checkbox}
-                />
-                <label htmlFor="acceptMarketing" className={styles.checkboxLabel}>
-                  ต้องการให้จัดส่งเสื้อทางไปรษณีย์
-                  <span className={styles.checkboxNote}>
-                    หากไม่เลือก ท่านจะต้องซื้อด้วยตนเอง
-                  </span>
-                </label>
-              </div>
-
-              {showDeliveryInfo && (
-                <div className={styles.deliveryInfoBox}>
-                  <strong>กรุณาตรวจสอบที่อยู่ให้ถูกต้อง</strong>
-                  <br />
-                  เสื้อจะถูกจัดส่งภายใน 3–7 วันทำการหลังจากยืนยันการชำระเงิน
-                </div>
-              )}
 
               {/* Buttons */}
-              <button 
-                onClick={handleSubmit} 
-                className={styles.btnPrimaryOrder}
-                type="button"
-              >
+              <button onClick={handleSubmit} className={styles.btnPrimaryOrder} type="button">
                 ถัดไป: เลือกแบบและขนาดเสื้อ →
               </button>
 
-              <button 
-                type="button" 
-                className={styles.btnSecondaryOrder}
-                onClick={handleGoHome}
-              >
+              <button type="button" className={styles.btnSecondaryOrder} onClick={() => router.push('/')}>
                 ← กลับสู่หน้าหลัก
               </button>
             </div>
@@ -386,23 +349,16 @@ export default function OrderPage() {
             <div className={styles.infoContent}>
               <h3 className={styles.infoTitle}>ข้อมูลสำคัญ</h3>
               <div className={styles.infoGrid}>
-                <div className={styles.infoItem}>
-                  <strong>ราคา:</strong> 198 บาทต่อตัว
-                </div>
-                <div className={styles.infoItem}>
-                  <strong>การชำระเงิน:</strong> โอนเงินผ่านบัญชีธนาคาร
-                </div>
-                <div className={styles.infoItem}>
-                  <strong>การจัดส่ง:</strong> จัดส่งทั่วประเทศไทย ค่าจัดส่ง ตัวแรก 50 บาท ตัวถัดไปเพิ่มตัวละ 10 บาท
-                </div>
+                <div className={styles.infoItem}><strong>ราคา:</strong> 198 บาทต่อตัว</div>
+                <div className={styles.infoItem}><strong>การชำระเงิน:</strong> โอนเงินผ่านบัญชีธนาคาร</div>
+                <div className={styles.infoItem}><strong>การจัดส่ง:</strong> ทั่วประเทศ (ค่าส่งเริ่ม 50.-)</div>
               </div>
               <p className={styles.infoNote}>
-                หลักฐานการจ่ายเงินต้องได้รับการตรวจสอบก่อนดำเนินการจัดส่ง ระบบจะไม่สามารถยกเลิกคำสั่งซื้อได้หลังจากชำระเงินแล้ว 
-                (วิธีการโอนเงินจะแสดงในขั้นตอนถัดไป) จำเป็นต้องโอนเงิน ภายใน 243 ปี 
-                โอนมากหรือน้อยกว่าราคาจะไม่ได้รับการยืนยันคำสั่งซื้อทันใจ
+                กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนกดถัดไป ระบบจะนำท่านไปสู่หน้าเลือกสินค้าและชำระเงินในลำดับถัดไป
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </div>
