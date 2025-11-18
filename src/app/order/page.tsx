@@ -176,9 +176,18 @@ export default function OrderPage() {
                   <span className={styles.dropdownAvatar}></span>
                   <span className={styles.dropdownName}>ผู้ใช้งาน</span>
                 </div>
-                <button className={styles.dropdownItem}> คำสั่งซื้อของฉัน</button>
-                <button className={styles.dropdownItem}> ประวัติการสั่งซื้อ</button>
-                <button className={`${styles.dropdownItem} ${styles.logout}`}> ออกจากระบบ</button>
+                <button className="dropdown-item" onClick={() => router.push('/order')}>
+       สั่งซื้อเสื้อ
+    </button>
+                <button
+                  className="dropdown-item"
+                  onClick={() => router.push('/orders')}
+                >
+                  ประวัติการสั่งซื้อ
+                </button>
+                <button className="dropdown-item logout" onClick={() => router.push('/login')}>
+       ออกจากระบบ
+    </button>
               </div>
             )}
           </div>

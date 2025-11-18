@@ -130,9 +130,12 @@ export default function SlipPage() {
     <button className="dropdown-item" onClick={() => router.push('/order')}>
        สั่งซื้อเสื้อ
     </button>
-    <button className="dropdown-item">
-       ประวัติการสั่งซื้อ
-    </button>
+    <button
+                  className="dropdown-item"
+                  onClick={() => router.push('/orders')}
+                >
+                  ประวัติการสั่งซื้อ
+                </button>
     <button className="dropdown-item logout" onClick={() => router.push('/login')}>
        ออกจากระบบ
     </button>

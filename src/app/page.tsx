@@ -198,7 +198,7 @@ export default function Page() {
               onClick={() => setSelectedType('normal')}
             >
               <span className="type-icon"></span>
-              <span className="type-name">เสื้อสีขาว</span>
+              <span className="type-name">เสื้อสีปกติ</span>
               <span className="type-count">27,328 ตัว</span>
             </button>
             
@@ -207,7 +207,7 @@ export default function Page() {
               onClick={() => setSelectedType('polo')}
             >
               <span className="type-icon"></span>
-              <span className="type-name">เสื้อโปโลดำ</span>
+              <span className="type-name">เสื้อไว้ทุกข์</span>
               <span className="type-count">4,291 ตัว</span>
             </button>
           </div>
@@ -254,7 +254,7 @@ export default function Page() {
             </div>
             <p className="footer-uni">นักศึกษามหาวิทยาลัยราชภัฏศรีสะเกษ</p>
             <div className="footer-team">
-              <span>นาย สมพง ใยคำ</span>
+              <span>นาย สมพงษ์ ใยคำ</span>
               <span>นาย สุพัน ชัยนอก</span>
               <span>นาย สรรพสิทธิ์ ยาเคน</span>
             </div>

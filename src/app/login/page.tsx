@@ -98,7 +98,7 @@ export default function LoginPage() {
             <img src="/site-logo.png" alt="logo" className="logo" />
           </div>
 
-          <Link href="/" className="back-link">กลับไปหน้าแรก</Link>
+          <Link href="/" className="back-link">กลับไปหน้าหลัก</Link>
 
           <p className="register-text">
             ยังไม่มีบัญชี? <Link href="/register">สมัครสมาชิก</Link>
