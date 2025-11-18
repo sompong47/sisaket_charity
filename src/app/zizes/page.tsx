@@ -10,9 +10,17 @@ interface SwiperProps { children: React.ReactNode; }
 interface SwiperSlideProps { children: React.ReactNode; }
 interface ShirtType { id: string; label: string; image: string; }
 interface Quantities { [key: string]: number; }
+// ✅ NEW: Interface สำหรับรายการสินค้าในคำสั่งซื้อ (Order Item)
+interface OrderItem {
+    productName: string;
+    size: string;
+    quantity: number;
+    price: number;
+}
 
 // ==================== SWIPER COMPONENTS ====================
 const Swiper: React.FC<SwiperProps> = ({ children }) => {
+// ... (โค้ด Swiper เหมือนเดิม)
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = React.Children.toArray(children);
   
@@ -170,7 +178,8 @@ export default function ZizesPage() {
 
         // 2. เตรียมข้อมูลสินค้า (Items Array)
         const shirtTypeLabel = SHIRT_TYPES.find(t => t.id === selectedType)?.label || 'ไม่ระบุ';
-        const items = [];
+        // ⬇️ แก้ไข Type: ให้ items เป็น OrderItem[] 
+        const items: OrderItem[] = [];
         
         Object.entries(quantities).forEach(([size, qty]) => {
             if (qty > 0) {
@@ -213,6 +222,7 @@ export default function ZizesPage() {
     setShowConfirmModal(false);
   };
 
+  // ... (โค้ด return JSX ส่วนที่เหลือเหมือนเดิม)
   return (
     <div className={styles.page}>
       <div className={styles.animatedBg}></div>
