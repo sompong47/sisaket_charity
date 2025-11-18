@@ -1,0 +1,718 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* =================== Global Styles =================== */
+:global(*) {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:global(body) {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* =================== Page Container =================== */
+.page {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* =================== Animated Background =================== */
+.animatedBg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #90a4ae 0%, #607d8b 50%, #455a64 100%);
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100px, -100vh);
+    opacity: 0;
+  }
+}
+
+/* =================== Navigation =================== */
+.topNavigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.topNavigation.scrolled {
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.navContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.logoText {
+  background: linear-gradient(135deg, #fff 0%, #b0bec5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.navMenu {
+  position: relative;
+}
+
+.userBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.userBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(176, 190, 197, 0.3);
+}
+
+.userAvatar {
+  font-size: 1.5rem;
+}
+
+.dropdownArrow {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.userBtn:hover .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 1rem);
+  right: 0;
+  min-width: 280px;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, rgba(144, 164, 174, 0.2), rgba(96, 125, 139, 0.2));
+}
+
+.dropdownAvatar {
+  font-size: 2rem;
+}
+
+.dropdownName {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  padding-left: 1.5rem;
+}
+
+.dropdownItem.logout {
+  color: #ff6b6b;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdownItem.logout:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* =================== Order Content =================== */
+.orderContent {
+  padding: 120px 2rem 4rem;
+}
+
+.orderContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =================== Order Header =================== */
+.orderHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+.orderTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #cfd8dc 50%, #90a4ae 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =================== Steps Navigation =================== */
+.stepsNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.stepActive {
+  color: #ffffff;
+}
+
+.stepNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.stepActive .stepNumber {
+  background: linear-gradient(135deg, #78909c 0%, #546e7a 100%);
+  color: white;
+  box-shadow: 0 0 20px rgba(120, 144, 156, 0.5);
+}
+
+/* =================== Image Slider =================== */
+.imageSlider {
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swiperContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.swiperWrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.swiperSlide {
+  min-width: 100%;
+  flex-shrink: 0;
+}
+
+.sliderImage {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  display: block;
+}
+
+.swiperPagination {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.swiperPaginationBullet {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.swiperPaginationBulletActive {
+  background: #ffffff;
+  transform: scale(1.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* =================== Form Section =================== */
+.formSection {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.formContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* =================== Section Title =================== */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+.sectionIcon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #78909c 0%, #546e7a 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 15px rgba(120, 144, 156, 0.3);
+}
+
+.sectionText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* =================== Form Fields =================== */
+.fieldGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.fieldWrapper {
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.5rem;
+}
+
+.required {
+  color: #ff6b6b;
+  margin-left: 2px;
+}
+
+/* =================== Inputs =================== */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input:hover,
+.textarea:hover,
+.select:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: #78909c;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(120, 144, 156, 0.2);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* =================== Error States =================== */
+.inputError,
+.textareaError {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #ff6b6b;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(255, 107, 107, 0.1);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.inputError::placeholder,
+.textareaError::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.inputError:focus,
+.textareaError:focus {
+  border-color: #ff5252;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+}
+
+.errorText {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+/* =================== Checkbox =================== */
+.checkboxWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(120, 144, 156, 0.1);
+  border: 2px solid rgba(120, 144, 156, 0.3);
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.checkboxWrapper:hover {
+  background: rgba(120, 144, 156, 0.15);
+  border-color: rgba(120, 144, 156, 0.5);
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #78909c;
+  flex-shrink: 0;
+}
+
+.checkboxLabel {
+  cursor: pointer;
+  user-select: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.checkboxNote {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+}
+
+/* =================== Delivery Info Box =================== */
+.deliveryInfoBox {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 2px solid rgba(34, 197, 94, 0.3);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =================== Buttons =================== */
+.btnPrimaryOrder {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea);
+  color: white;
+  padding: 1.25rem;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(120, 144, 156, 0.3);
+}
+
+.btnPrimaryOrder:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(120, 144, 156, 0.5);
+}
+
+.btnSecondaryOrder {
+  width: 100%;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnSecondaryOrder:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* =================== Info Box =================== */
+.infoBox {
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.infoIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.infoContent {
+  flex-grow: 1;
+}
+
+.infoTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.infoItem strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.infoNote {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* =================== Responsive Design =================== */
+@media (max-width: 1024px) {
+  .orderTitle {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navContainer {
+    padding: 0 1rem;
+  }
+
+  .userText {
+    display: none;
+  }
+
+  .orderContent {
+    padding: 100px 1rem 2rem;
+  }
+
+  .orderHeader {
+    padding: 1.5rem;
+  }
+
+  .orderTitle {
+    font-size: 1.75rem;
+  }
+
+  .stepsNav {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .fieldGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .sliderImage {
+    height: 300px;
+  }
+
+  .infoBox {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .formSection {
+    padding: 1.5rem;
+  }
+
+  .sliderImage {
+    height: 250px;
+  }
+}
