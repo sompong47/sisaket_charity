@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '@/utils/api'; // ✅ เรียกใช้ API
+import api from '@/utils/api';
 import styles from './zizes.module.css';
 
 // ==================== INTERFACES ====================
@@ -10,17 +10,17 @@ interface SwiperProps { children: React.ReactNode; }
 interface SwiperSlideProps { children: React.ReactNode; }
 interface ShirtType { id: string; label: string; image: string; }
 interface Quantities { [key: string]: number; }
-// ✅ NEW: Interface สำหรับรายการสินค้าในคำสั่งซื้อ (Order Item)
+
+// ✅ เพิ่ม Interface สำหรับรายการสินค้า
 interface OrderItem {
-    productName: string;
-    size: string;
-    quantity: number;
-    price: number;
+  productName: string;
+  size: string;
+  quantity: number;
+  price: number;
 }
 
 // ==================== SWIPER COMPONENTS ====================
 const Swiper: React.FC<SwiperProps> = ({ children }) => {
-// ... (โค้ด Swiper เหมือนเดิม)
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = React.Children.toArray(children);
   
@@ -66,7 +66,7 @@ const ADDITIONAL_SHIPPING = 10;
 
 const SHIRT_TYPES: ShirtType[] = [
   { id: 'traditional', label: 'เสื้อสีปกติ', image: '/ssk1.jpg' },
-  { id: 'polo', label: 'เสื้อไว้ทุกข์', image: '/ssk.jpg' } // ตรวจสอบ path รูปด้วยนะครับ
+  { id: 'polo', label: 'เสื้อไว้ทุกข์', image: '/ssk.jpg' }
 ];
 
 const SLIDER_IMAGES = [
@@ -88,10 +88,10 @@ export default function ZizesPage() {
     "6XL": 0, "7XL": 0, "8XL": 0, "9XL": 0, "10XL": 0,
   });
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [loading, setLoading] = useState(false); // ✅ เพิ่ม Loading state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // ✅ เช็คว่ามีข้อมูลลูกค้าจากหน้าแรกไหม ถ้าไม่มีให้เด้งกลับ
+    // เช็คว่ามีข้อมูลลูกค้าจากหน้าแรกไหม
     const customerData = localStorage.getItem('tempOrderCustomer');
     if (!customerData) {
         alert('กรุณากรอกข้อมูลผู้สั่งซื้อก่อน');
@@ -163,24 +163,23 @@ export default function ZizesPage() {
     setShowConfirmModal(true);
   };
 
-  // ✅ ฟังก์ชันยืนยันการสั่งซื้อ (เชื่อมต่อ Backend)
+  // ✅ ฟังก์ชันยืนยันการสั่งซื้อ (แก้ไขแล้ว)
   const handleConfirmOrder = async () => {
     setLoading(true);
     try {
-        // 1. ดึงข้อมูลลูกค้าจาก LocalStorage (ที่กรอกในหน้าแรก)
+        // 1. ดึงข้อมูลลูกค้าจาก LocalStorage
         const customerDataStr = localStorage.getItem('tempOrderCustomer');
         if (!customerDataStr) {
             alert('ข้อมูลผู้สั่งซื้อหายไป กรุณากรอกใหม่');
-            router.push('/order');
+            router.push('/slip');
             return;
         }
         const customerData = JSON.parse(customerDataStr);
 
-        // 2. เตรียมข้อมูลสินค้า (Items Array)
+        // 2. เตรียมข้อมูลสินค้า
         const shirtTypeLabel = SHIRT_TYPES.find(t => t.id === selectedType)?.label || 'ไม่ระบุ';
-        // ⬇️ แก้ไข Type: ให้ items เป็น OrderItem[] 
-        const items: OrderItem[] = [];
         
+        const items: OrderItem[] = [];
         Object.entries(quantities).forEach(([size, qty]) => {
             if (qty > 0) {
                 items.push({
@@ -192,22 +191,22 @@ export default function ZizesPage() {
             }
         });
 
-        // 3. สร้าง Payload ส่งให้ Backend
+        // 3. สร้าง Payload
         const payload = {
             customerName: customerData.name,
             phone: customerData.phone,
-            // address: customerData.address, // (Backend ปัจจุบันอาจยังไม่ได้รับ field นี้ แต่ส่งไปเผื่อไว้)
             items: items,
-            totalAmount: getGrandTotal(), // ราคารวมส่งแล้ว
+            totalAmount: getGrandTotal(),
         };
 
         // 4. ยิง API
         await api.post('/api/orders', payload);
 
-        // 5. สำเร็จ! ล้างข้อมูลชั่วคราวและไปหน้าประวัติ
+        // 5. สำเร็จ! ล้างข้อมูลชั่วคราวและไปหน้า Slip
         localStorage.removeItem('tempOrderCustomer');
-        alert('✅ สั่งซื้อสำเร็จ! กรุณาไปที่หน้า "ประวัติการสั่งซื้อ" เพื่อแจ้งชำระเงิน');
-        router.push('/orders'); // ไปหน้าประวัติ เพื่อให้กดแจ้งโอน
+        
+        // ✅ เปลี่ยนตรงนี้: ไปหน้า Slip (Step 3)
+        router.push('/slip'); 
 
     } catch (error: any) {
         console.error('Order Error:', error);
@@ -222,7 +221,6 @@ export default function ZizesPage() {
     setShowConfirmModal(false);
   };
 
-  // ... (โค้ด return JSX ส่วนที่เหลือเหมือนเดิม)
   return (
     <div className={styles.page}>
       <div className={styles.animatedBg}></div>
@@ -324,7 +322,7 @@ export default function ZizesPage() {
               onClick={handleSubmit} 
               disabled={!selectedType || getTotalQuantity() === 0 || loading}
             >
-              {loading ? 'กำลังบันทึกข้อมูล...' : `🛒 ยืนยันการสั่งซื้อ (${getGrandTotal().toLocaleString()} บาท)`}
+              {loading ? 'กำลังบันทึก...' : `🛒 ยืนยันการสั่งซื้อ (${getGrandTotal().toLocaleString()} บาท)`}
             </button>
 
             <button className={styles.btnSecondaryOrder} onClick={() => router.push('/order')}>← กลับไปแก้ไขข้อมูล</button>
