@@ -68,7 +68,7 @@ export default function AdminPage() {
   const [productForm, setProductForm] = useState({
     productCode: '', 
     name: '', 
-    description: '', // ✅ ต้องมีค่าเริ่มต้น
+    description: '', 
     price: 0,
     image: '', 
     stockS: 0, stockM: 0, stockL: 0, stockXL: 0, stock2XL: 0
@@ -339,44 +339,97 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* MODAL: MANAGE PRODUCT */}
+      {/* MODAL: MANAGE PRODUCT (ปรับปรุงการจัดวาง) */}
       {showProductModal && (
-        <div className={styles.modalOverlay}>
-           <div className={styles.modalContent} style={{maxWidth:'600px', textAlign:'left'}}>
-             <h2>{isEditing ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h2>
-             <form onSubmit={handleProductSubmit} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-                <input type="text" placeholder="รหัสสินค้า (เช่น T001)" value={productForm.productCode} onChange={e => setProductForm({...productForm, productCode: e.target.value})} required disabled={isEditing} />
-                <input type="text" placeholder="ชื่อสินค้า" value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})} required />
+        <div className={styles.modalOverlay} onClick={() => setShowProductModal(false)}>
+           <div className={styles.modalContent} style={{maxWidth:'650px', textAlign:'left'}} onClick={e => e.stopPropagation()}>
+             <h2 className={styles.modalProductTitle}>{isEditing ? 'แก้ไขสินค้า' : 'เพิ่มสินค้าใหม่'}</h2>
+             
+             <form onSubmit={handleProductSubmit} className={styles.modalForm}>
                 
-                {/* ✅✅✅ เพิ่มช่องนี้ครับ (แก้ปัญหา Error) ✅✅✅ */}
-                <textarea 
-                   placeholder="รายละเอียดสินค้า (เช่น เนื้อผ้าดี ใส่สบาย)" 
-                   value={productForm.description} 
-                   onChange={e => setProductForm({...productForm, description: e.target.value})} 
-                   required 
-                   rows={3}
-                   style={{padding: '10px', borderRadius: '5px', border: '1px solid #ddd'}}
-                />
-
-                <input type="number" placeholder="ราคา (บาท)" value={productForm.price} onChange={e => setProductForm({...productForm, price: Number(e.target.value)})} required />
-                
-                <label>รูปสินค้า:</label>
-                <input type="file" accept="image/*" onChange={handleImageUpload} />
-                {productForm.image && <img src={productForm.image} style={{height:'100px', objectFit:'contain'}} />}
-
-                <label>สต็อกสินค้า (จำนวน):</label>
-                <div style={{display:'grid', gridTemplateColumns:'repeat(5, 1fr)', gap:'5px'}}>
-                  {['S','M','L','XL','2XL'].map(size => (
-                    <div key={size}>
-                      <span style={{fontSize:'12px'}}>{size}</span>
-                      <input type="number" placeholder="0" value={(productForm as any)[`stock${size}`]} onChange={e => setProductForm({...productForm, [`stock${size}`]: e.target.value})} style={{width:'100%'}} />
+                {/* 1. ข้อมูลพื้นฐาน: รหัส, ชื่อ, ราคา */}
+                <div className={styles.formGrid}>
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>รหัสสินค้า</label>
+                        <input 
+                          type="text" 
+                          placeholder="เช่น T001" 
+                          value={productForm.productCode} 
+                          onChange={e => setProductForm({...productForm, productCode: e.target.value})} 
+                          required 
+                          className={styles.formInput}
+                          disabled={isEditing}
+                        />
                     </div>
-                  ))}
+                    <div className={styles.formGroup} style={{gridColumn: 'span 2'}}>
+                        <label className={styles.formLabel}>ชื่อสินค้า</label>
+                        <input 
+                          type="text" 
+                          placeholder="ชื่อสินค้าเต็ม" 
+                          value={productForm.name} 
+                          onChange={e => setProductForm({...productForm, name: e.target.value})} 
+                          required 
+                          className={styles.formInput}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>ราคา (บาท)</label>
+                        <input 
+                          type="number" 
+                          placeholder="0" 
+                          value={productForm.price} 
+                          onChange={e => setProductForm({...productForm, price: Number(e.target.value)})} 
+                          required 
+                          className={styles.formInput}
+                          min="0"
+                        />
+                    </div>
                 </div>
 
-                <div style={{display:'flex', gap:'10px', marginTop:'20px'}}>
-                  <button type="submit" className={styles.btnPrimary} style={{flex:1}}>บันทึก</button>
-                  <button type="button" onClick={() => setShowProductModal(false)} style={{flex:1, background:'#ccc', border:'none', borderRadius:'10px', cursor:'pointer'}}>ยกเลิก</button>
+                {/* 2. รายละเอียดสินค้า */}
+                <div className={styles.formGroup}>
+                   <label className={styles.formLabel}>รายละเอียดสินค้า</label>
+                   <textarea 
+                      placeholder="อธิบายคุณสมบัติ (เช่น เนื้อผ้าดี, ทรงสวย, เหมาะสำหรับ...) " 
+                      value={productForm.description} 
+                      onChange={e => setProductForm({...productForm, description: e.target.value})} 
+                      required 
+                      rows={4}
+                      className={styles.formTextarea}
+                   />
+                </div>
+
+                {/* 3. รูปภาพสินค้า */}
+                <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>รูปสินค้าหลัก</label>
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className={styles.formInput} style={{padding: '10px'}} />
+                    {productForm.image && <img src={productForm.image} style={{height:'100px', objectFit:'contain', borderRadius:'5px', border:'1px solid #3b82f6'}} alt="Product Preview" />}
+                </div>
+
+                {/* 4. สต็อกสินค้า */}
+                <div className={styles.formGroup} style={{marginTop:'15px'}}>
+                    <label className={styles.formLabel}>สต็อกสินค้า (จำนวนต่อไซซ์)</label>
+                    <div className={styles.formGrid}>
+                      {['S','M','L','XL','2XL'].map(size => (
+                        <div key={size} className={styles.stockInputGroup}>
+                          <span className={styles.formLabel} style={{fontSize:'14px', textAlign:'center', color:'#60a5fa'}}>{size}</span>
+                          <input 
+                            type="number" 
+                            placeholder="0" 
+                            value={(productForm as any)[`stock${size}`]} 
+                            onChange={e => setProductForm({...productForm, [`stock${size}`]: e.target.value})} 
+                            className={styles.formInput}
+                            min="0"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                </div>
+
+                {/* 5. ปุ่มควบคุม */}
+                <div className={styles.buttonGroup}>
+                  <button type="submit" className={styles.btnPrimary}>{isEditing ? 'บันทึกการแก้ไข' : 'เพิ่มสินค้า'}</button>
+                  <button type="button" onClick={() => setShowProductModal(false)} className={styles.btnSecondary}>ยกเลิก</button>
                 </div>
              </form>
            </div>
@@ -386,7 +439,16 @@ export default function AdminPage() {
       {/* CSS for Modal */}
       <style jsx>{`
         .modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-        .modalContent { background: white; padding: 20px; border-radius: 10px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modalContent { 
+          background: #1e293b; /* ใช้สีเข้มที่เข้ากับพื้นหลัง */
+          padding: 30px; 
+          border-radius: 12px; 
+          width: 90%; 
+          max-height: 90vh; 
+          overflow-y: auto; 
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+          border: 1px solid rgba(59, 130, 246, 0.4);
+        }
       `}</style>
     </div>
   );

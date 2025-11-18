@@ -627,32 +627,133 @@
   transform: translateY(-2px);
 }
 
-/* =================== Coming Soon =================== */
-.comingSoon {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: 20px;
+/* =================== MODAL STYLES =================== */
+.modalOverlay { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.7); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 2000; 
 }
 
-.comingSoonIcon {
-  font-size: 5rem;
-  margin-bottom: 1rem;
+.modalContent { 
+  background: #1e293b; 
+  padding: 30px; 
+  border-radius: 12px; 
+  width: 90%; 
+  max-width: 650px; /* ใช้ max-width นี้แทน inline style */
+  max-height: 90vh; 
+  overflow-y: auto; 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.4);
 }
 
-.comingSoon h2 {
-  font-size: 2rem;
+.modalProductTitle {
+  font-size: 1.8rem;
   font-weight: 700;
   color: #60a5fa;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center; 
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+  padding-bottom: 10px;
 }
 
-.comingSoon p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1.125rem;
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
+  margin: 0 auto; 
+  width: 100%;
 }
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.formLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  resize: vertical;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Style for Stock Inputs */
+.stockInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.stockInputGroup input {
+  padding: 8px;
+  text-align: center;
+}
+
+/* Button Group */
+.buttonGroup {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btnSecondary {
+  flex: 1;
+  padding: 12px 20px;
+  background: #4b5563;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btnSecondary:hover {
+  background: #6b7280;
+  transform: translateY(-1px);
+}
+
 
 /* =================== Responsive =================== */
 @media (max-width: 1024px) {
